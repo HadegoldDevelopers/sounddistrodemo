@@ -372,9 +372,28 @@ if ($transaction->status === 'paid') {
         ->with('success', 'Payment confirmed!');
 }
 
-private function handleNowPaymentCallback(Request $request)
+public function handleNowPaymentCallback(Request $request)
 {
     Log::info('NowPayments callback', $request->all());
+
+    // Verify the HMAC-SHA512 signature NowPayments attaches to every IPN.
+    $gateway = PaymentGateway::where('name', 'nowpayment')->first();
+    $ipnSecret = $this->decryptGatewaySetting($gateway, 'ipn_secret');
+
+    if (empty($ipnSecret)) {
+        Log::error('NowPayments callback: no IPN secret configured');
+        return response()->json(['error' => 'IPN secret not configured'], 503);
+    }
+
+    $signature = $request->header('x-nowpayments-sig');
+    $expected = hash_hmac('sha512', $request->getContent(), $ipnSecret);
+
+    if (empty($signature) || !hash_equals($expected, $signature)) {
+        Log::warning('NowPayments callback: signature verification failed', [
+            'order_id' => $request->input('order_id'),
+        ]);
+        return response()->json(['error' => 'Invalid signature'], 400);
+    }
 
     $status = $request->input('payment_status');
     $orderId = $request->input('order_id');
@@ -389,6 +408,11 @@ private function handleNowPaymentCallback(Request $request)
 
     if (!$transaction) {
         return response()->json(['error' => 'Transaction not found'], 404);
+    }
+
+    // Idempotency guard: never process an already-paid transaction again.
+    if ($transaction->status === 'paid') {
+        return response()->json(['message' => 'Payment already confirmed']);
     }
 
     $user = $transaction->user;
@@ -471,13 +495,36 @@ public function paypalWebhook(Request $request)
 {
     Log::info('PayPal Webhook', $request->all());
 
+    $paypal = app(\App\Services\PaymentGateways\PaypalService::class);
+
+    if (!$paypal->getWebhookId()) {
+        Log::error('PayPal webhook: no webhook ID configured');
+        return response()->json(['error' => 'Webhook not configured'], 503);
+    }
+
+    // Verify the webhook signature with PayPal before trusting it.
+    $verified = $paypal->verifyWebhook(
+        $request->header('Paypal-Auth-Algo', ''),
+        $request->header('Paypal-Cert-Url', ''),
+        $request->header('Paypal-Transmission-Id', ''),
+        $request->header('Paypal-Transmission-Sig', ''),
+        $request->header('Paypal-Transmission-Time', ''),
+        $request->getContent()
+    );
+
+    if (!$verified) {
+        Log::warning('PayPal webhook: signature verification failed', [
+            'transmission_id' => $request->header('Paypal-Transmission-Id'),
+        ]);
+        return response()->json(['error' => 'Webhook signature verification failed'], 400);
+    }
+
     if ($request->event_type !== 'CHECKOUT.ORDER.APPROVED') {
         return response()->json(['ignored' => true]);
     }
 
     $orderId = $request->resource['id'];
 
-    $paypal = app(\App\Services\PaymentGateways\PaypalService::class);
     $capture = $paypal->captureOrder($orderId);
 
     if (($capture['status'] ?? null) !== 'COMPLETED') {
@@ -498,6 +545,14 @@ public function paypalWebhook(Request $request)
         return response()->json([
             'error' => 'Transaction not found'
         ], 404);
+    }
+
+    // Idempotency guard: never process an already-paid transaction again.
+    if ($transaction->status === 'paid') {
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Payment already confirmed',
+        ]);
     }
 
     $user = User::find($transaction->user_id);
@@ -536,6 +591,31 @@ public function cancel()
 {
     return redirect()->route('user.dashboard')
         ->with('error', 'Payment was cancelled.');
+}
+
+
+/**
+ * Read a value from a gateway's settings array, decrypting it if it is
+ * an encrypted (sensitive) value.
+ */
+private function decryptGatewaySetting($gateway, string $key)
+{
+    if (!$gateway) {
+        return null;
+    }
+
+    $settings = is_array($gateway->settings) ? $gateway->settings : [];
+    $value = $settings[$key] ?? null;
+
+    if (!is_string($value) || $value === '') {
+        return null;
+    }
+
+    try {
+        return decrypt($value);
+    } catch (\Throwable $e) {
+        return $value;
+    }
 }
 
 

@@ -20,6 +20,7 @@ use App\Http\Controllers\StatsController;
     Route::get('/refund', [HomeController::class, 'refund'])->name('refund.page');
     Route::get('/payment/callback/{gateway}', [PaymentController::class, 'handleCallback'])->name('payment.callback');
     Route::post('/webhook/paypal', [PaymentController::class, 'paypalWebhook'])->name('paypal.webhook');
+    Route::post('/webhook/nowpayments', [PaymentController::class, 'handleNowPaymentCallback'])->name('nowpayments.webhook');
 
 
 Route::middleware(['auth', 'verified', 'sub', 'active'])->group(function () {

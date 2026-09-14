@@ -150,6 +150,25 @@ ACR_HOST={{ $acrHost }}</pre>
 @endif
 
                     @endif
+
+                    @if($gateway->name === 'paypal')
+                        <div class="mb-4">
+                            <label for="paypal_webhook_id" class="block mb-1 text-sm font-medium text-gray-700">Webhook ID</label>
+                            <input type="text" name="gateways[paypal][webhook_id]" id="paypal_webhook_id"
+                                   value="{{ old('gateways.paypal.webhook_id', $gateway->settings['webhook_id'] ?? '') }}"
+                                   class="w-full rounded border border-gray-300 p-2 text-gray-800 bg-white">
+                            <small class="text-gray-400">Found in your PayPal app &rarr; Webhooks. Used to verify webhook signatures.</small>
+                        </div>
+                    @elseif($gateway->name === 'nowpayment')
+                        <div class="mb-4">
+                            <label for="nowpayment_ipn_secret" class="block mb-1 text-sm font-medium text-gray-700">IPN Secret</label>
+                            <input type="password" name="gateways[nowpayment][ipn_secret]" id="nowpayment_ipn_secret"
+                                   value="{{ old('gateways.nowpayment.ipn_secret') }}"
+                                   placeholder="Leave blank to keep the current secret"
+                                   class="w-full rounded border border-gray-300 p-2 text-gray-800 bg-white">
+                            <small class="text-gray-400">Your NowPayments IPN secret — used to verify the callback signature.</small>
+                        </div>
+                    @endif
                 </div>
             @endforeach
         </div>
