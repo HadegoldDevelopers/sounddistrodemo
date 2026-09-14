@@ -1,0 +1,71 @@
+# ── OS junk ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+Desktop.ini
+._*
+
+# ── Environment & secrets ───────────────────────────────
+.env
+.env.backup
+.env.production
+.env.local
+*.key
+
+# ── Dependencies ────────────────────────────────────────
+/vendor
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+
+# ── Laravel runtime ─────────────────────────────────────
+/storage/logs/*
+!/storage/logs/.gitignore
+/storage/framework/cache/*
+!/storage/framework/cache/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/framework/testing/*
+/storage/framework/schedule/*
+/storage/pail
+/storage/pail/*
+
+# ── Compiled / optimized ────────────────────────────────
+/bootstrap/cache/*.php
+/bootstrap/cache/packages.php
+/bootstrap/cache/services.php
+
+# ── Installer lock (fresh installs must not be pre-installed) ──
+/storage/installed
+
+# ── Databases ───────────────────────────────────────────
+/database/*.sqlite
+
+# ── User content / uploads (not part of source) ─────────
+/public/uploads/*
+/public/songs/*
+/public/covers/*
+/public/temp/*
+/public/profile_images/*
+
+# ── Vite / build output ─────────────────────────────────
+/public/temp
+public/build
+
+# ── Private licensing infrastructure — NEVER commit or ship ──
+/license-server
+
+# ── IDE / editor ────────────────────────────────────────
+/.idea
+/.vscode
+*.swp
+*.swo
+*~
+
+# ── Logs / misc ─────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

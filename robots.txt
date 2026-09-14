@@ -1,0 +1,41 @@
+# Sitemap for search engines
+Sitemap: 1lanems.com/sitemap.xml
+
+# Allow all standard search engines
+User-agent: *
+Disallow: /login
+Disallow: /register
+Disallow: /password/request
+Disallow: /password/reset
+Allow: /
+
+# Cloudflare Managed Content
+# These rules are added by Cloudflare; do not modify if you want their protections
+User-Agent: *
+Content-signal: search=yes,ai-train=no,ai-input=no
+Allow: /
+
+
+User-agent: Amazonbot
+Disallow: /
+
+User-agent: Applebot-Extended
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: Google-Extended
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: meta-externalagent
+Disallow: /

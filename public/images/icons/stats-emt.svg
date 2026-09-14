@@ -1,0 +1,11 @@
+
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 24 24"
+     fill="none"
+     stroke="#9CA3AF"
+     stroke-width="1.5"
+     stroke-linecap="round"
+     stroke-linejoin="round">
+    <path d="M4 20v-6M9 20v-10M14 20v-4M19 20V8" />
+    <path d="M14 4v6a2 2 0 11-1.5-1.94V4l6-1v2l-4 .67z" />
+</svg>
