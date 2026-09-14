@@ -335,6 +335,18 @@ composer install --optimize-autoloader --no-dev</code></pre>
                 <i class="fa-solid fa-circle-check"></i>
                 <div><strong>Installation complete!</strong> Log in at <code>yourdomain.com/admin/login</code> with the credentials you created in Step 5.</div>
             </div>
+
+            <h3>cPanel / Shared Hosting (Document Root Fix)</h3>
+            <p>Laravel serves everything from the <code>public/</code> folder. On cPanel, set the domain&rsquo;s <strong>document root</strong> to your project&rsquo;s <code>public</code> directory:</p>
+            <pre><code>Document root: /home/yourusername/yourdomain.com/public</code></pre>
+            <p>In cPanel: <strong>Domains &rarr; Manage (your domain) &rarr; Document Root</strong> and point it at the <code>public</code> folder.</p>
+
+            <div class="alert alert-warning">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div><strong>If you cannot change the document root:</strong> the package includes a root-level <code>.htaccess</code> file that automatically serves everything from <code>public/</code> (styles, images, and compiled assets. Without it, the site loads but stylesheets and images return 404 (blank admin panel, missing images).</div>
+            </div>
+
+            <p>After changing the document root (or uploading the included <code>.htaccess</code>), run <code>php artisan optimize:clear</code> and reload the site.</p>
         </div>
 
         <!-- Configuration -->

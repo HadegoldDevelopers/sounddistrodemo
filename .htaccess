@@ -1,18 +1,13 @@
 <IfModule mod_rewrite.c>
-RewriteEngine On
-
-# Redirect www → non-www (preserve HTTPS)
-RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
-
-</IfModule>
-
-<IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
 
     RewriteEngine On
+
+    # Redirect www → non-www (preserve HTTPS)
+    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+    RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
@@ -27,10 +22,16 @@ RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
-    # Send Requests To Front Controller...
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ index.php [L]
+    # Serve existing files/directories from the public/ folder.
+    # This is required on cPanel/shared hosting when the domain document
+    # root points at the project root instead of the public/ directory —
+    # otherwise styles, images, and compiled assets (public/temp) return 404.
+    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f [OR]
+    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -d
+    RewriteRule ^(.*)$ public/$1 [L]
+
+    # Send all other requests to the Laravel front controller
+    RewriteRule ^(.*)$ public/index.php [L]
 </IfModule>
 
 # php -- BEGIN cPanel-generated handler, do not edit
