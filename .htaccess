@@ -1,17 +1,31 @@
 <IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
     RewriteEngine On
 
     # Redirect www → non-www (preserve HTTPS)
     RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
     RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
 
-    # Forward every request into the public/ directory.
-    # Required on cPanel/LiteSpeed hosting where the domain document root is
-    # the Laravel project root — public/.htaccess then handles static files
-    # and the front controller. The RewriteCond guard prevents a rewrite
-    # loop (500 error) when the request is already inside /public/.
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Handle X-XSRF-Token Header
+    RewriteCond %{HTTP:x-xsrf-token} .
+    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+
+    # Serve existing files/directories that live inside public/ (CSS, images,
+    # compiled assets, etc.). The !^/public/ guard prevents a rewrite loop.
     RewriteCond %{REQUEST_URI} !^/public/ [NC]
+    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f [OR]
+    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -d
     RewriteRule ^(.*)$ public/$1 [L]
+
+    # Send every other request to the Laravel front controller inside public/
+    RewriteRule ^(.*)$ public/index.php [L]
 </IfModule>
 
 # php -- BEGIN cPanel-generated handler, do not edit
