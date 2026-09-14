@@ -20,7 +20,14 @@ class LicenseEnforce
 {
     public function handle(Request $request, Closure $next)
     {
-        if (config('app.env') !== 'production' || !file_exists(storage_path('installed'))) {
+        if (!file_exists(storage_path('installed'))) {
+            return $next($request);
+        }
+
+        $license = app(LicenseService::class);
+
+        // Local / dev hosts (localhost, 127.0.0.1, *.test, *.local) are exempt.
+        if ($license->isLocalDomain()) {
             return $next($request);
         }
 
@@ -32,8 +39,6 @@ class LicenseEnforce
             $request->routeIs('admin.login.submit')) {
             return $next($request);
         }
-
-        $license = app(LicenseService::class);
 
         try {
             $license->checkNow();

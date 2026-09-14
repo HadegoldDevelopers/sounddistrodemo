@@ -13,7 +13,7 @@ class HomeController extends Controller
     public function index()
     {
         $global = view()->shared('global');
-        $homepage = HomepageContent::first();
+        $homepage = HomepageContent::firstOrCreate([]);
 
         $plans = SubscriptionPlan::query()
             ->when(!($global['allow_label_registration'] ?? false), fn($query) => $query->where('role', '!=', 'label'))

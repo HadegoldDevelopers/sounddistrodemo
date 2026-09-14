@@ -16,6 +16,28 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
 {
     \Illuminate\Support\Facades\Schema::defaultStringLength(191);
+
+    // If no APP_KEY is present (e.g. a fresh unzip before the installer runs),
+    // generate one now so the app can boot and the web installer can load.
+    if (empty(config('app.key'))) {
+        $key = 'base64:' . base64_encode(random_bytes(32));
+        config(['app.key' => $key]);
+
+        $envFile = base_path('.env');
+
+        if (is_file($envFile)) {
+            $contents = file_get_contents($envFile);
+            $line    = 'APP_KEY=' . $key;
+
+            if (preg_match('/^APP_KEY=.*$/m', $contents)) {
+                $contents = preg_replace('/^APP_KEY=.*$/m', $line, $contents);
+            } else {
+                $contents .= PHP_EOL . $line;
+            }
+
+            file_put_contents($envFile, $contents);
+        }
+    }
 }
 
     /**
@@ -27,8 +49,10 @@ class AppServiceProvider extends ServiceProvider
             return;
         }
 
-        // Defense-in-depth license re-check (runs on every boot, cached 24h)
-        if (config('app.env') === 'production') {
+        // Defense-in-depth license re-check (cached 24h). Local / dev hosts
+        // are exempt; every other environment is verified against the
+        // license server.
+        if (!app(\App\Services\LicenseService::class)->isLocalDomain()) {
             try {
                 app(\App\Services\LicenseService::class)->checkNow();
             } catch (Exception $e) {

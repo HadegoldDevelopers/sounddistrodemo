@@ -65,10 +65,26 @@ class AdminController extends Controller
         $license = app(LicenseService::class);
 
         if (!$license->restore($request->purchase_code)) {
-            return back()->with('error', 'Invalid purchase code. Please check and try again.');
+            return back()->with('error', $this->licenseErrorMessage($license->lastReason));
         }
 
         return back()->with('success', 'License verified. You can now log in.');
+    }
+
+    /**
+     * Human-friendly message for a license server rejection reason.
+     *
+     * @param  string|null  $reason
+     * @return string
+     */
+    protected function licenseErrorMessage(?string $reason): string
+    {
+        return match ($reason) {
+            'domain_limit' => 'This purchase code is already registered to its maximum number of domains.',
+            'envato_error' => 'The license server could not reach Envato. Please try again later.',
+            'server_unreachable' => 'The license server could not be reached. Please check your connection.',
+            default => 'Invalid purchase code. Please check and try again.',
+        };
     }
     
     public function edit()

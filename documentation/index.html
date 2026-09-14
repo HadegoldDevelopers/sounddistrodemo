@@ -745,6 +745,14 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
 
             <p>DistroKit includes a built-in license enforcement system that verifies each installation against the CodeCanyon purchase code. This protects your work from piracy and lets you control which installations are legitimate.</p>
 
+            <h3>Domain Binding</h3>
+            <p>Each purchase code is bound to a fixed number of domains, tracked by the license server:</p>
+            <ul>
+                <li><strong>Regular License</strong> — valid on <strong>1 domain</strong></li>
+                <li><strong>Extended License</strong> — valid on <strong>3 domains</strong></li>
+            </ul>
+            <p>The first domain that activates a purchase code is registered automatically. Attempting to activate the same code on another domain beyond the limit is rejected with a <em>"purchase code already registered to its maximum number of domains"</em> message. The license server keeps a permanent record of every buyer (purchase code, license type, buyer email, domains, purchase date).</p>
+
             <h3>How It Behaves</h3>
 
             <p><strong>On installation:</strong> the installer&rsquo;s <em>License Verification</em> step asks the buyer for their CodeCanyon purchase code and verifies it against the license server before installation can proceed.</p>
@@ -762,7 +770,7 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
 
             <div class="alert alert-warning">
                 <i class="fa-solid fa-triangle-exclamation"></i>
-                <div><strong>Note for buyers:</strong> license enforcement runs in production (<code>APP_ENV=production</code>). During local development (<code>APP_ENV=local</code>) the check is skipped so you can build freely. When you deploy, the installer defaults to <em>Production</em>.</div>
+                <div><strong>Note for buyers:</strong> license enforcement runs in <strong>every</strong> environment. Local / development hosts (localhost, 127.0.0.1, <code>*.test</code>, <code>*.local</code>) are automatically exempt, so you can develop freely. Every real domain is verified against the license server daily.</div>
             </div>
 
             <h3>Admin License Page</h3>

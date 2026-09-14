@@ -14,10 +14,9 @@ class RedirectIfAuthenticated
     public function handle(Request $request, Closure $next, ...$guards)
     {
         foreach ($guards as $guard) {
-            if (Auth::guard($guard)->check()) {
-                 dd('Redirecting logged-in user'); 
+            if (Auth::guard($guard)->check()) { 
                 
-                return redirect('/dashboard'); // Redirect logged-in users
+                return redirect('/dashboard');
             }
         }
 

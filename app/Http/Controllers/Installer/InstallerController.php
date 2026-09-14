@@ -201,9 +201,16 @@ class InstallerController extends Controller
         $license = app(\App\Services\LicenseService::class);
 
         if (!$license->verifyOnInstall($request->purchase_code)) {
-            return back()->withErrors([
-                'purchase_code' => 'Invalid purchase code. Please check and try again.',
-            ]);
+            $reason = $license->lastReason;
+
+            $message = match ($reason) {
+                'domain_limit' => 'This purchase code is already registered to its maximum number of domains.',
+                'envato_error' => 'The license server could not reach Envato. Please try again later.',
+                'server_unreachable' => 'The license server could not be reached. Please check your connection.',
+                default => 'Invalid purchase code. Please check and try again.',
+            };
+
+            return back()->withErrors(['purchase_code' => $message]);
         }
 
         session()->put('installer.purchase_code', $request->purchase_code);
