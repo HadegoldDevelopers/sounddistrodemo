@@ -205,7 +205,7 @@ class InstallerController extends Controller
 
             $message = match ($reason) {
                 'domain_limit' => 'This purchase code is already registered to its maximum number of domains.',
-                'envato_error' => 'The license server could not reach Envato. Please try again later.',
+                'envato_error' => 'The purchase code could not be verified with Envato right now. Please try again later.',
                 'server_unreachable' => 'The license server could not be reached. Please check your connection.',
                 default => 'Invalid purchase code. Please check and try again.',
             };

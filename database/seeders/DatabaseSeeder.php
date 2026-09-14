@@ -25,5 +25,6 @@ User::factory()->create([
         $this->call(CurrenciesTableSeeder::class);
         $this->call(SettingsTableSeeder::class);
         $this->call(SubscriptionPlansTableSeeder::class);
+        $this->call(HomepageContentTableSeeder::class);
     }
 }
