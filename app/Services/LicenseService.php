@@ -36,6 +36,14 @@ class LicenseService
     protected const KEY = 'NTFhMGI4MTQ5NGQ2M2FlZjYyZGIyMmYyNjFhZmM5ZGMwMmM4MmUzYjE1OTM0MmYxYWI1YWJjZjk5MGQyNDFkYQ==';
 
     /**
+     * Reason from the last license server response (valid, invalid,
+     * domain_limit, envato_error, server_unreachable…).
+     *
+     * @var string|null
+     */
+    public ?string $lastReason = null;
+
+    /**
      * The decoded license server URL.
      *
      * @return string
@@ -98,8 +106,11 @@ class LicenseService
         $payload = $this->request($code);
 
         if ($payload === null) {
+            $this->lastReason = 'server_unreachable';
             return null;
         }
+
+        $this->lastReason = $payload['reason'] ?? ($payload['valid'] ? 'valid' : 'invalid');
 
         return $payload['valid'] === true;
     }
@@ -135,9 +146,12 @@ class LicenseService
         if ($valid === true) {
             Setting::setValue('license_failures', 0);
             Setting::setValue('license_state', 'valid');
-        } else {
+        } elseif ($valid === false) {
+            // Explicit "invalid" from the license server → escalate.
             $this->recordFailure();
         }
+        // null (server unreachable) → leave the current state unchanged so a
+        // temporary network blip never locks the site down.
     }
 
     /**
