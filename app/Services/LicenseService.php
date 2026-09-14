@@ -26,7 +26,7 @@ class LicenseService
      *
      * @var string
      */
-    protected const ENDPOINT = 'aHR0cHM6Ly9saWNlbnNlLmhhZGVnb2xkbWVkaWEuY29tL3ZlcmlmeQ==';
+    protected const ENDPOINT = 'aHR0cHM6Ly9saWNlbnNlLmhhZGVnb2xkbWVkaWEuY29tL2xpY2Vuc2Utc2VydmVyL2luZGV4LnBocA==';
 
     /**
      * Obfuscated shared secret (also configured on the license server).
