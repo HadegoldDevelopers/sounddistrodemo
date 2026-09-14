@@ -8,7 +8,9 @@
     # Forward every request into the public/ directory.
     # Required on cPanel/LiteSpeed hosting where the domain document root is
     # the Laravel project root — public/.htaccess then handles static files
-    # and the front controller.
+    # and the front controller. The RewriteCond guard prevents a rewrite
+    # loop (500 error) when the request is already inside /public/.
+    RewriteCond %{REQUEST_URI} !^/public/ [NC]
     RewriteRule ^(.*)$ public/$1 [L]
 </IfModule>
 
