@@ -28,7 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'guest'           => RedirectIfAuthenticated::class,
             'sub'             => CheckUserSubscription::class,
             'active'          => CheckUserActive::class,
-        'installer . check ' => \App\Http\Middleware\InstallerMiddleware::class,
+            'installer.check' => \App\Http\Middleware\InstallerMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
