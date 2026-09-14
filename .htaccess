@@ -27,6 +27,11 @@ RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
     RewriteCond %{REQUEST_URI} (.+)/$
     RewriteRule ^ %1 [L,R=301]
 
+    # Normalize: never allow the /public/ directory to be reached directly.
+    # /public/foo → /foo (avoids duplicate URLs / duplicate content).
+    RewriteCond %{REQUEST_URI} ^/public/ [NC]
+    RewriteRule ^public/?(.*)$ /$1 [R=301,L]
+
     # Forward every request into public/ (public/.htaccess then serves real
     # files and routes the rest to public/index.php). The !^/public/ guard
     # prevents a rewrite loop.
