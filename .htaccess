@@ -1,13 +1,18 @@
 <IfModule mod_rewrite.c>
+RewriteEngine On
+
+# Redirect www → non-www (preserve HTTPS)
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
+
+</IfModule>
+
+<IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
 
     RewriteEngine On
-
-    # Redirect www → non-www (preserve HTTPS)
-    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-    RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
@@ -17,15 +22,21 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
-    # Serve existing files/directories that live inside public/ (CSS, images,
-    # compiled assets, etc.). The !^/public/ guard prevents a rewrite loop.
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Forward every request into public/ (public/.htaccess then serves real
+    # files and routes the rest to public/index.php). The !^/public/ guard
+    # prevents a rewrite loop.
     RewriteCond %{REQUEST_URI} !^/public/ [NC]
-    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -f [OR]
-    RewriteCond %{DOCUMENT_ROOT}/public%{REQUEST_URI} -d
     RewriteRule ^(.*)$ public/$1 [L]
 
-    # Send every other request to the Laravel front controller inside public/
-    RewriteRule ^(.*)$ public/index.php [L]
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
 </IfModule>
 
 # php -- BEGIN cPanel-generated handler, do not edit
