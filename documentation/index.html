@@ -343,10 +343,85 @@ composer install --optimize-autoloader --no-dev</code></pre>
 
             <div class="alert alert-warning">
                 <i class="fa-solid fa-triangle-exclamation"></i>
-                <div><strong>If you cannot change the document root:</strong> the package includes a root-level <code>.htaccess</code> file that automatically serves everything from <code>public/</code> (styles, images, and compiled assets. Without it, the site loads but stylesheets and images return 404 (blank admin panel, missing images).</div>
+                <div><strong>If you cannot change the document root</strong> (most shared hosts / LiteSpeed), the package includes <strong>two <code>.htaccess</code> files</strong> that make everything work automatically. Upload <strong>both</strong> files — the root one forwards every request into <code>public/</code>, and <code>public/.htaccess</code> serves real files (styles, images, compiled assets) and routes everything else to <code>public/index.php</code>.</div>
             </div>
 
-            <p>After changing the document root (or uploading the included <code>.htaccess</code>), run <code>php artisan optimize:clear</code> and reload the site.</p>
+            <h4>1. Root <code>.htaccess</code> (project root, next to <code>artisan</code>)</h4>
+            <pre><code>&lt;IfModule mod_rewrite.c&gt;
+RewriteEngine On
+
+# Redirect www → non-www (preserve HTTPS)
+RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
+
+&lt;/IfModule&gt;
+
+&lt;IfModule mod_rewrite.c&gt;
+    &lt;IfModule mod_negotiation.c&gt;
+        Options -MultiViews -Indexes
+    &lt;/IfModule&gt;
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Handle X-XSRF-Token Header
+    RewriteCond %{HTTP:x-xsrf-token} .
+    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Forward every request into public/ (public/.htaccess then serves real
+    # files and routes the rest to public/index.php). The !^/public/ guard
+    # prevents a rewrite loop.
+    RewriteCond %{REQUEST_URI} !^/public/ [NC]
+    RewriteRule ^(.*)$ public/$1 [L]
+
+    # Send Requests To Front Controller...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [L]
+&lt;/IfModule&gt;</code></pre>
+
+            <h4>2. <code>public/.htaccess</code> (inside the <code>public/</code> folder)</h4>
+            <pre><code>&lt;IfModule mod_rewrite.c&gt;
+    &lt;IfModule mod_negotiation.c&gt;
+        Options -MultiViews -Indexes
+    &lt;/IfModule&gt;
+
+    RewriteEngine On
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Handle X-XSRF-Token Header
+    RewriteCond %{HTTP:x-xsrf-token} .
+    RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
+
+    # Redirect Trailing Slashes If Not A Folder...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_URI} (.+)/$
+    RewriteRule ^ %1 [L,R=301]
+
+    # Serve existing files or directories directly
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Send all other requests to the Laravel front controller
+    RewriteRule ^ index.php [L]
+&lt;/IfModule&gt;</code></pre>
+
+            <div class="alert alert-danger">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <div><strong>Important:</strong> upload <strong>both</strong> files. If only the root <code>.htaccess</code> is present, the site loads but styles/images work while app pages (login, dashboard) return 404. If <code>public/.htaccess</code> is missing its front-controller rule, non-asset pages 404. After uploading, run <code>php artisan optimize:clear</code> and reload.</div>
+            </div>
         </div>
 
         <!-- Configuration -->
