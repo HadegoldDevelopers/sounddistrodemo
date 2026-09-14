@@ -24,13 +24,6 @@ class LicenseEnforce
             return $next($request);
         }
 
-        $license = app(LicenseService::class);
-
-        // Local / dev hosts (localhost, 127.0.0.1, *.test, *.local) are exempt.
-        if ($license->isLocalDomain()) {
-            return $next($request);
-        }
-
         $path = $request->path();
 
         if (str_starts_with($path, 'install') ||
@@ -39,6 +32,8 @@ class LicenseEnforce
             $request->routeIs('admin.login.submit')) {
             return $next($request);
         }
+
+        $license = app(LicenseService::class);
 
         try {
             $license->checkNow();

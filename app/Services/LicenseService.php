@@ -203,25 +203,6 @@ class LicenseService
     }
 
     /**
-     * Determine if the site is running on a local / development host.
-     * Local hosts are exempt from license enforcement so developers can
-     * run the app without a purchase code, while every other environment
-     * (production or not) is checked normally.
-     *
-     * @return bool
-     */
-    public function isLocalDomain(): bool
-    {
-        $host = strtolower((string) (request()->getHost() ?: parse_url(config('app.url', ''), PHP_URL_HOST)));
-
-        return in_array($host, ['localhost', '127.0.0.1', '127.0.0.0', '::1'], true)
-            || str_ends_with($host, '.test')
-            || str_ends_with($host, '.local')
-            || str_starts_with($host, '192.168.')
-            || str_starts_with($host, '10.');
-    }
-
-    /**
      * Call the license server for the given purchase code.
      *
      * @param  string  $code
