@@ -47,12 +47,13 @@ Desktop.ini
 /public/uploads/*
 /public/songs/*
 /public/covers/*
-/public/temp/*
 /public/profile_images/*
+/public/temp/chunks
+/public/temp/covers
 
-# ── Vite / build output ─────────────────────────────────
-/public/temp
-public/build
+# ── Vite build output (compiled assets shipped with the package) ──
+/public/hot
+/public/build
 
 # ── Private licensing infrastructure — NEVER commit or ship ──
 /license-server
