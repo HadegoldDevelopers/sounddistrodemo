@@ -13,17 +13,16 @@ class PaypalService
     protected $clientId;
     protected $secret;
     protected $baseUrl;
+    protected $webhookId;
 
     public function __construct()
     {
         $gateway = PaymentGateway::where('name', 'paypal')->firstOrFail();
         $settings = $gateway->settings ?? [];
 
-        try { $this->clientId = $settings['client_id']; }
-        catch (\Exception $e) { $this->clientId = $settings['client_id']; }
-
-        try { $this->secret = decrypt($settings['client_secret']); }
-        catch (\Exception $e) { $this->secret = $settings['client_secret']; }
+        $this->clientId = $settings['client_id'] ?? null;
+        $this->secret = isset($settings['client_secret']) ? $this->decryptValue($settings['client_secret']) : null;
+        $this->webhookId = $settings['webhook_id'] ?? null;
 
         $this->baseUrl = strtolower($gateway->mode) === 'live'
             ? 'https://api-m.paypal.com'
@@ -38,6 +37,73 @@ class PaypalService
     public function getBaseUrl()
     {
         return $this->baseUrl;
+    }
+
+    public function getWebhookId()
+    {
+        return $this->webhookId;
+    }
+
+    protected function decryptValue($value)
+    {
+        if (!is_string($value) || $value === '') {
+            return null;
+        }
+
+        try {
+            return decrypt($value);
+        } catch (\Throwable $e) {
+            return $value;
+        }
+    }
+
+    /**
+     * Verify an incoming webhook using PayPal's verification API.
+     *
+     * @param string $authAlgo       Paypal-Auth-Algo header
+     * @param string $certUrl        Paypal-Cert-Url header
+     * @param string $transmissionId Paypal-Transmission-Id header
+     * @param string $transmissionSig Paypal-Transmission-Sig header
+     * @param string $transmissionTime Paypal-Transmission-Time header
+     * @param string $body           Raw webhook payload
+     */
+    public function verifyWebhook($authAlgo, $certUrl, $transmissionId, $transmissionSig, $transmissionTime, $body)
+    {
+        if (!$this->webhookId) {
+            throw new \Exception('PayPal webhook ID is not configured.');
+        }
+
+        $event = json_decode($body, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            return false;
+        }
+
+        $token = $this->getAccessToken();
+
+        $response = Http::withToken($token)
+            ->withHeaders([
+                'Content-Type' => 'application/json',
+                'Accept' => 'application/json',
+            ])
+            ->post("{$this->baseUrl}/v1/notification/verify-webhook-signature", [
+                'auth_algo' => $authAlgo,
+                'cert_url' => $certUrl,
+                'transmission_id' => $transmissionId,
+                'transmission_sig' => $transmissionSig,
+                'transmission_time' => $transmissionTime,
+                'webhook_id' => $this->webhookId,
+                'webhook_event' => $event,
+            ]);
+
+        if (!$response->successful()) {
+            Log::error('PayPal webhook verification request failed', [
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+            return false;
+        }
+
+        return ($response['verification_status'] ?? null) === 'SUCCESS';
     }
 
     public function getAccessToken()
