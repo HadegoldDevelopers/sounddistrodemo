@@ -1,5 +1,5 @@
 <footer id="contact" class="bg-white py-16 px-6 md:px-12 lg:px-20 text-gray-600">
-  <div class="max-w-7xl mx-auto grid md:grid-cols-4 gap-12">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-12">
     
     <!-- Column 1: Company Info -->
     <div>
@@ -58,18 +58,7 @@
 
     </div>
 
-    <!-- Column 3: Company -->
-    <!--<div>-->
-    <!--  <h4 class="font-bold text-gray-800 mb-3 uppercase text-sm">Company</h4>-->
-    <!--  <ul class="space-y-2 text-sm">-->
-    <!--    <li><a href="{{ route('home') }}/#about" class="hover:text-pink-500">About</a></li>-->
-    <!--    <li><a href="{{ route('home') }}/#blog" class="hover:text-pink-500">Blog</a></li>-->
-    <!--    <li><a href="{{ route('home') }}/#careers" class="hover:text-pink-500">Careers</a></li>-->
-    <!--    <li><a href="{{ route('home') }}/#support" class="hover:text-pink-500">Support</a></li>-->
-    <!--  </ul>-->
-    <!--</div>-->
-
-    <!-- Column 4: Legal -->
+    <!-- Column 3: Legal -->
     <div>
       <h4 class="font-bold text-gray-800 mb-3 uppercase text-sm">Legal</h4>
       <ul class="space-y-2 text-sm">
