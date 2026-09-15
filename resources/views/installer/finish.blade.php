@@ -81,6 +81,22 @@
                 </ol>
             </div>
 
+            {{-- Verify license before continuing --}}
+            <div style="background:var(--surface2); border:1px solid var(--primary); border-radius:10px;
+                            padding:16px; text-align:center; max-width:480px; margin:0 auto 16px;">
+                <div style="font-size:14px; font-weight:700; margin-bottom:8px; color:var(--text);">
+                    Verify Your Purchase Code
+                </div>
+                <p style="font-size:12px; color:var(--muted); margin-bottom:12px;">
+                    Before clicking the admin link or homepage, verify the script is licensed by opening
+                    the license page in a new tab and confirming your purchase code.
+                </p>
+                <a href="{{ config('app.url') }}/admin/license" target="_blank" rel="noopener"
+                    class="btn btn-primary" style="font-size:14px; padding:10px 24px;">
+                    Verify License →
+                </a>
+            </div>
+
             {{-- Action buttons --}}
             <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
                 <a href="{{ route('installer.complete') }}" class="btn btn-primary" style="font-size:15px; padding:12px 32px;">

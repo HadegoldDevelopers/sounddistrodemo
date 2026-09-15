@@ -174,7 +174,7 @@ class InstallerController extends Controller
             'installer.mail_name'     => $request->mail_name,
         ]);
 
-        return redirect()->route('installer.admin');
+        return redirect()->route('installer.license');
     }
 
     // ─────────────────────────────────────────────

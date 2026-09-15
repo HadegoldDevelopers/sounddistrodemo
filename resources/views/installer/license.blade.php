@@ -21,7 +21,7 @@
 
         <div class="form-group">
             <button type="submit" class="btn-primary">Verify &amp; Continue</button>
-            <a href="{{ route('installer.database') }}" class="btn btn-outline">← Back</a>
+            <a href="{{ route('installer.environment') }}" class="btn btn-outline">← Back</a>
         </div>
     </form>
 @endsection
