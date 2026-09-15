@@ -126,26 +126,23 @@ if (isset($validated['site_url'])) {
 
     public function editTerms()
     {
-        $termsPdf = Setting::getValue('terms_pdf');
+        $terms = Setting::getValue('terms', '');
 
-        return view('admin.settings.terms', compact('termsPdf'));
+        return view('admin.settings.terms', compact('terms'));
     }
 
     public function updateTerms(Request $request)
     {
         $request->validate([
-            'terms_pdf' => 'nullable|mimes:pdf|max:5120',
+            'terms' => 'nullable|string',
         ]);
-        
-        // Handle terms_pdf upload
-        if ($request->hasFile('terms_pdf')) {
-            $termsFile = $request->file('terms_pdf');
-            $termsName = 'terms_' . time() . '.pdf';
-            $termsFile->move(public_path('uploads/terms'), $termsName);
-            
-            Setting::setValue('terms_pdf', 'public/uploads/terms/' . $termsName);
+
+        if (empty(strip_tags($request->terms))) {
+            return back()->withErrors(['terms' => 'Terms & Conditions content cannot be empty.']);
         }
-        
+
+        Setting::setValue('terms', $request->terms);
+        Cache::forget('global_site_settings');
 
         return back()->with('success', 'Terms & Conditions updated successfully.');
     }

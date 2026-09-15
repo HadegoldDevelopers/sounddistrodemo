@@ -64,7 +64,7 @@ class HomeController extends Controller
 
     public function terms()
     {
-        $terms = Setting::getValue('terms_pdf', '');
+        $terms = Setting::getValue('terms', '');
         return view('terms', compact('terms'));
     }
 

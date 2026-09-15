@@ -76,6 +76,7 @@ class AppServiceProvider extends ServiceProvider
                 'phone' => Setting::getValue('contact_phone', ''),
                 'address' => Setting::getValue('contact_address', ''),
                 'terms_pdf' => Setting::getValue('terms_pdf'),
+                'terms' => Setting::getValue('terms', ''),
                 'privacy_policy' => Setting::getValue('privacy_policy', ''),
 
                 // Socials
