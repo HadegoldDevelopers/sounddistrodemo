@@ -83,6 +83,6 @@
 
   <div class="border-t border-gray-200 mt-12 pt-6 text-sm text-gray-400 flex flex-col md:flex-row justify-between items-center">
     <p>&copy; {{ now()->year }} {{ $global['site_name'] }}. All Rights Reserved.</p>
-    <p>Made for creators, by creators.</p>
+    <p>{{ $global['footer_text'] ?? 'Made for creators, by creators.' }}</p>
   </div>
 </footer>

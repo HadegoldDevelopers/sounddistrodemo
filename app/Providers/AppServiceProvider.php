@@ -69,6 +69,7 @@ class AppServiceProvider extends ServiceProvider
                 'site_name' => Setting::getValue('site_name', 'WhiteLabel Distro'),
                 'site_title' => Setting::getValue('site_title', ''),
                 'site_tag' => Setting::getValue('site_tagline', 'Your music, your vibe'),
+                'footer_text' => Setting::getValue('footer_text', 'Made for creators, by creators.'),
                 'site_logo' => Setting::getValue('site_logo', ''),
                 'favicon' => Setting::getValue('favicon', ''),
                 'email' => Setting::getValue('contact_email', ''),

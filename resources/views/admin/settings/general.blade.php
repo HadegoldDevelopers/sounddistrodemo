@@ -213,6 +213,14 @@
         class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
 </div>
 
+<div class="mb-4">
+    <label for="footer_text" class="block font-medium mb-1">Footer Text</label>
+    <input type="text" name="footer_text" id="footer_text" value="{{ old('footer_text', $settings['footer_text'] ?? '') }}"
+        placeholder="Made for creators, by creators."
+        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+    <small class="text-gray-400">Shown at the bottom-right of the site footer.</small>
+</div>
+
             </div>
         </section>
 

@@ -41,6 +41,7 @@ class SettingsController extends Controller
             'twitter' => Setting::getValue('twitter'),
             'instagram' => Setting::getValue('instagram'),
             'linkedin' => Setting::getValue('linkedin'),
+            'footer_text' => Setting::getValue('footer_text', 'Made for creators, by creators.'),
             
             
         ];
@@ -73,6 +74,7 @@ class SettingsController extends Controller
             'twitter' => 'nullable|url|max:255',
             'instagram' => 'nullable|url|max:255',
             'linkedin' => 'nullable|url|max:255',
+            'footer_text' => 'nullable|string|max:255',
         ]);
         
         // Handle logo upload
