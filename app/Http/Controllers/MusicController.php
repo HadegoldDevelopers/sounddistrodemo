@@ -41,7 +41,7 @@ class MusicController extends Controller
     public function uploadCover(Request $request)
     {
         $request->validate([
-            'cover' => 'required|image|max:10000',
+            'cover' => 'required|image|mimes:jpeg,jpg|max:10000|dimensions:min_width=3000,min_height=3000',
         ]);
 
         $file = $request->file('cover');

@@ -399,72 +399,77 @@ class InstallerController extends Controller
         $s      = session();
         $appKey = 'base64:' . base64_encode(random_bytes(32));
 
-        $env = <<<ENV
-APP_NAME="{$s->get('installer.site_name')}"
-APP_ENV={$s->get('installer.app_env', 'production')}
-APP_KEY={$appKey}
-APP_DEBUG=false
-APP_URL={$s->get('installer.site_url')}
+        // 1. Detect a missing .env and clone .env.example if needed. This
+        //    guarantees a valid base before we overwrite any values.
+        if (!File::exists(base_path('.env'))) {
+            if (!File::exists(base_path('.env.example'))) {
+                throw new Exception('.env.example is missing from the installation.');
+            }
+            File::copy(base_path('.env.example'), base_path('.env'));
+        }
 
-FORCE_HTTPS=0
+        // 2. Build the installer-specific values to apply.
+        $values = [
+            'APP_NAME'    => $s->get('installer.site_name'),
+            'APP_ENV'     => $s->get('installer.app_env', 'production'),
+            'APP_KEY'     => $appKey,
+            'APP_DEBUG'   => 'false',
+            'APP_URL'     => $s->get('installer.site_url'),
 
-APP_LOCALE=en
-APP_FALLBACK_LOCALE=en
-APP_FAKER_LOCALE=en_US
-APP_MAINTENANCE_DRIVER=file
-PHP_CLI_SERVER_WORKERS=4
-BCRYPT_ROUNDS=12
+            'LOG_LEVEL'   => 'error',
 
-LOG_CHANNEL=stack
-LOG_STACK=single
-LOG_DEPRECATIONS_CHANNEL=null
-LOG_LEVEL=error
+            'DB_CONNECTION' => 'mysql',
+            'DB_HOST'     => $s->get('installer.db_host'),
+            'DB_PORT'     => $s->get('installer.db_port', 3306),
+            'DB_DATABASE' => $s->get('installer.db_name'),
+            'DB_USERNAME' => $s->get('installer.db_username'),
+            'DB_PASSWORD' => $s->get('installer.db_password'),
 
-DB_CONNECTION=mysql
-DB_HOST={$s->get('installer.db_host')}
-DB_PORT={$s->get('installer.db_port', 3306)}
-DB_DATABASE={$s->get('installer.db_name')}
-DB_USERNAME={$s->get('installer.db_username')}
-DB_PASSWORD={$s->get('installer.db_password')}
+            'MAIL_MAILER'     => $s->get('installer.mail_driver', 'smtp'),
+            'MAIL_HOST'       => $s->get('installer.mail_host'),
+            'MAIL_PORT'       => $s->get('installer.mail_port', 465),
+            'MAIL_USERNAME'   => $s->get('installer.mail_user'),
+            'MAIL_PASSWORD'   => $s->get('installer.mail_pass'),
+            'MAIL_ENCRYPTION' => 'ssl',
+            'MAIL_FROM_ADDRESS' => $s->get('installer.mail_from'),
+            'MAIL_FROM_NAME'  => $s->get('installer.site_name'),
 
-MAIL_MAILER={$s->get('installer.mail_driver', 'smtp')}
-MAIL_SCHEME=null
-MAIL_HOST={$s->get('installer.mail_host')}
-MAIL_PORT={$s->get('installer.mail_port', 465)}
-MAIL_USERNAME={$s->get('installer.mail_user')}
-MAIL_PASSWORD={$s->get('installer.mail_pass')}
-MAIL_ENCRYPTION=ssl
-MAIL_FROM_ADDRESS="{$s->get('installer.mail_from')}"
-MAIL_FROM_NAME="\${APP_NAME}"
+            'VITE_APP_NAME' => $s->get('installer.site_name'),
+        ];
 
-SESSION_DRIVER=file
-SESSION_LIFETIME=120
-SESSION_ENCRYPT=false
-SESSION_PATH=/
-SESSION_DOMAIN=null
+        // 3. Overwrite the values in-place, preserving any other keys that
+        //    already exist in the .env (e.g. ACRCloud, gateway keys).
+        $env = File::get(base_path('.env'));
 
-BROADCAST_CONNECTION=log
-FILESYSTEM_DISK=local
-QUEUE_CONNECTION=database
-CACHE_STORE=file
-
-MEMCACHED_HOST=127.0.0.1
-
-REDIS_CLIENT=phpredis
-REDIS_HOST=127.0.0.1
-REDIS_PASSWORD=null
-REDIS_PORT=6379
-
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_DEFAULT_REGION=us-east-1
-AWS_BUCKET=
-AWS_USE_PATH_STYLE_ENDPOINT=false
-
-
-VITE_APP_NAME="\${APP_NAME}"
-ENV;
+        foreach ($values as $key => $value) {
+            $env = $this->writeEnvKey($env, $key, $value);
+        }
 
         File::put(base_path('.env'), $env);
+    }
+
+    /**
+     * Set or replace a single KEY=VALUE line inside a .env string, preserving
+     * the rest of the file. Values with spaces/special chars are quoted.
+     */
+    private function writeEnvKey(string $env, string $key, ?string $value): string
+    {
+        $value = (string) $value;
+
+        if ($value === '' || preg_match('/[\s#"\']/', $value)) {
+            $line = $key . '="' . str_replace('"', '\\"', $value) . '"';
+        } else {
+            $line = $key . '=' . $value;
+        }
+
+        if (preg_match('/^' . preg_quote($key) . '=.*$/m', $env)) {
+            return preg_replace(
+                '/^' . preg_quote($key) . '=.*$/m',
+                $line,
+                $env
+            );
+        }
+
+        return rtrim($env) . "\n" . $line . "\n";
     }
 }
