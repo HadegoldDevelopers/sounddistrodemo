@@ -25,15 +25,17 @@ Distro Supawave is a white-label music distribution platform built with **Larave
 
 ## Installation
 
+The package includes the `vendor/` folder, so no Composer/SSH is required — works on any cPanel/shared host.
+
 ```bash
-git clone <this-repo> your-domain
-cd your-domain
-composer install --optimize-autoloader --no-dev
+# 1. Upload the package contents to your domain (public_html or the domain root)
+# 2. Copy the env template (or leave it — the web installer creates it automatically)
 cp .env.example .env
-php artisan key:generate
 ```
 
-Then visit your domain — you'll be redirected to the web installer at `/install`.
+Then visit your domain — you'll be redirected to the web installer at `/install`. The installer detects a missing `.env`, clones `.env.example`, and handles requirements, database, environment, license, and admin setup for you.
+
+> Optional: if you have SSH, you can instead run `composer install --optimize-autoloader --no-dev` to rebuild `vendor/`.
 
 ## Configuration
 
