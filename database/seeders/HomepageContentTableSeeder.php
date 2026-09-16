@@ -18,7 +18,7 @@ class HomepageContentTableSeeder extends Seeder
         }
 
         HomepageContent::create([
-            'hero_title'      => 'Create. Monetize. Repeat.',
+            'hero_title'      => 'Create your Art. Make your Money. Repeat',
             'hero_text'       => 'Distribute your songs to 150+ platforms and get paid every month.',
             'hero_image'      => 'images/home/hero.jpg',
 
@@ -34,18 +34,18 @@ class HomepageContentTableSeeder extends Seeder
             ],
 
             'labels_title'    => 'Built for Labels. Trusted by Artists.',
-            'labels_text'     => 'DistroKit connects your music with the right audience. Access playlist pitching, cross-platform marketing, and royalty tools designed for independent labels.',
+            'labels_text'     => 'Distro Supawave connects your music with the right audience. Access playlist pitching, cross-platform marketing, and royalty tools designed for independent labels.',
             'labels_image'    => 'images/home/canoe.jpg',
 
             'pricing_title'   => 'Simple Pricing. No hidden fees.',
             'pricing_text'    => 'Choose the plan that fits you. No complicated tiers.',
 
             'artists'         => [
-                ['name' => 'Skales', 'genre' => 'Afrobeats · Nigeria', 'image' => 'images/artist/skales.jpg', 'overlay_color' => '#FF4F81'],
-                ['name' => 'Ice Prince', 'genre' => 'Hip-Hop · Nigeria', 'image' => 'images/artist/ice_prince.png', 'overlay_color' => '#A020F0'],
-                ['name' => 'Yaba Buluku Boyz', 'genre' => 'Amapiano · Mozambique', 'image' => 'images/artist/yaba_buluku_boy.jpg', 'overlay_color' => '#FF8C00'],
-                ['name' => 'DJ Hacord', 'genre' => 'Afrobeats · DJ', 'image' => 'images/artist/DJ_Hacord.png', 'overlay_color' => '#4FD1C5'],
-            ],
+            ['name' => 'RAJESH SYANGTAN', 'genre' => 'Soul', 'image' => 'images/artists/rajesh.jpg', 'overlay_color' => '#FF4F81'],
+            ['name' => 'ZAAKY BUDDY', 'genre' => 'Hip-Hop · United States', 'image' => 'images/artists/zaaky.jpg', 'overlay_color' => '#A020F0'],
+            ['name' => 'ISMAIL SULEIMAN', 'genre' => 'Amapiano · South Africa', 'image' => 'images/artists/ismail.jpg', 'overlay_color' => '#FF8C00'],
+            ['name' => 'ANTONI SHKRABA', 'genre' => 'Afrobeats · Nigeria', 'image' => 'images/artists/antoni.jpg', 'overlay_color' => '#4FD1C5'],
+        ],
 
             'cta_title_1'     => 'Ready to Launch',
             'cta_title_2'     => 'Your Music?',

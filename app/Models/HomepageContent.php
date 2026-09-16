@@ -71,8 +71,8 @@ class HomepageContent extends Model
         if (is_null($value)) {
             return match ($key) {
                 // Hero
-                'hero_title'      => __('Create. Monetize. Repeat.'),
-                'hero_text'       => __('SonicDist is built for creators like you. Distribute your songs to 150+ platforms and get paid every month.'),
+                'hero_title'      => __('Create your Art. Make your Money. Repeat.'),
+                'hero_text'       => __('Distro Supawave is built for creators like you. Distribute your songs to 150+ platforms and get paid every month.'),
                 'hero_image'      => 'images/home/hero.jpg',
 
                 // Features
@@ -82,7 +82,7 @@ class HomepageContent extends Model
 
                 // Labels section
                 'labels_title'    => __('Built for Labels. Trusted by Artists.'),
-                'labels_text'     => __('Sound Distro connects your music with the right audience. Access playlist pitching, cross‑platform marketing, and royalty tools designed for independent labels.'),
+                'labels_text'     => __('Distro Supawave connects your music with the right audience. Access playlist pitching, cross‑platform marketing, and royalty tools designed for independent labels.'),
                 'labels_image'    => 'images/home/canoe.jpg',
 
                 // Pricing
@@ -94,7 +94,7 @@ class HomepageContent extends Model
                 // CTA
                 'cta_title_1'     => __('Ready to Launch'),
                 'cta_title_2'     => __('Your Music?'),
-                'cta_text'        => __('Get started today with a free Sound Distro account.'),
+                'cta_text'        => __('Get started today with a free Distro Supawave account.'),
                 
                 default           => $value
             };
@@ -124,10 +124,11 @@ class HomepageContent extends Model
     private function getDefaultArtists(): array
     {
         return [
-            ['name' => 'Skales', 'genre' => 'Afrobeats · Nigeria', 'image' => 'images/artist/skales.jpg', 'overlay_color' => '#FF4F81'],
-            ['name' => 'Ice Prince', 'genre' => 'Hip-Hop · Nigeria', 'image' => 'images/artist/ice_prince.png', 'overlay_color' => '#A020F0'],
-            ['name' => 'Yaba Buluku Boyz', 'genre' => 'Amapiano · Mozambique', 'image' => 'images/artist/yaba_buluku_boy.jpg', 'overlay_color' => '#FF8C00'],
-            ['name' => 'DJ Hacord', 'genre' => 'Afrobeats · DJ', 'image' => 'images/artist/DJ_Hacord.png', 'overlay_color' => '#4FD1C5'],
+
+            ['name' => 'RAJESH SYANGTAN', 'genre' => 'Soul', 'image' => 'images/artists/rajesh.jpg', 'overlay_color' => '#FF4F81'],
+            ['name' => 'ZAAKY BUDDY', 'genre' => 'Hip-Hop · United States', 'image' => 'images/artists/zaaky.jpg', 'overlay_color' => '#A020F0'],
+            ['name' => 'ISMAIL SULEIMAN', 'genre' => 'Amapiano · South Africa', 'image' => 'images/artists/ismail.jpg', 'overlay_color' => '#FF8C00'],
+            ['name' => 'ANTONI SHKRABA', 'genre' => 'Afrobeats · Nigeria', 'image' => 'images/artists/antoni.jpg', 'overlay_color' => '#4FD1C5'],
         ];
     }
 }
