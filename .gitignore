@@ -77,3 +77,4 @@ SoundDistro-*.zip
 DistroSupawave-*.zip
 *.zip
 /preview/
+!/storage/framework/schedule/.gitignore

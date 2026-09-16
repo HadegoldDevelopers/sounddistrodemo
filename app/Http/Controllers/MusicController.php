@@ -72,11 +72,20 @@ class MusicController extends Controller
         $request->validate([
             'project_title' => 'required|string',
             'track_index'   => 'required|integer',
-            'chunk'         => 'required|file',
+            'chunk'         => 'required|file|max:51200',
             'chunk_number'  => 'required|integer',
             'total_chunks'  => 'required|integer',
             'original_name' => 'required|string',
         ]);
+
+        // Allowed audio master formats. Anything else is rejected outright,
+        // which prevents arbitrary (e.g. executable) file uploads.
+        $allowedExtensions = ['wav', 'mp3', 'm4a', 'aac', 'flac', 'ogg', 'oga', 'opus', 'aiff', 'wma', 'mp4'];
+        $ext = strtolower(pathinfo($request->original_name, PATHINFO_EXTENSION));
+
+        if (!in_array($ext, $allowedExtensions, true)) {
+            return response()->json(['error' => 'Unsupported audio format.'], 422);
+        }
 
         $projectTitle = $request->project_title;
         $trackIndex   = (int) $request->track_index;
@@ -86,8 +95,6 @@ class MusicController extends Controller
 
         $safeTitle = preg_replace('/\s+/', '_', trim($projectTitle));
         $safeTitle = preg_replace('/[^A-Za-z0-9_\-]/', '', $safeTitle);
-
-        $ext = pathinfo($originalName, PATHINFO_EXTENSION);
         $trackNumber = str_pad($trackIndex, 2, '0', STR_PAD_LEFT);
 
         $tempDir = public_path('temp/chunks');
@@ -120,6 +127,19 @@ class MusicController extends Controller
 
             fclose($out);
 
+            // Defense in depth: verify the assembled file is genuine audio
+            // before storing it in the web root. If not, remove it.
+            $finfo = new \finfo(FILEINFO_MIME_TYPE);
+            $mime  = $finfo->file($finalPath);
+
+            if (!$mime || (!str_starts_with($mime, 'audio/') && $mime !== 'video/mp4')) {
+                @unlink($finalPath);
+                foreach ($this->remainingChunks($tempDir, $safeTitle, $trackNumber, $totalChunks) as $p) {
+                    @unlink($p);
+                }
+                return response()->json(['error' => 'Uploaded file is not a valid audio file.'], 422);
+            }
+
             // Route the finished master through the copyright scanner. The
             // snippet is small (≤1MB), so this returns in a couple of
             // seconds and guarantees the verdict is recorded before the
@@ -134,6 +154,18 @@ class MusicController extends Controller
         }
 
         return response()->json(['done' => false]);
+    }
+
+    /**
+     * Return the list of uploaded chunk paths for a track.
+     */
+    private function remainingChunks(string $tempDir, string $safeTitle, string $trackNumber, int $totalChunks): array
+    {
+        $paths = [];
+        for ($i = 1; $i <= $totalChunks; $i++) {
+            $paths[] = $tempDir . '/' . $safeTitle . '_Track_' . $trackNumber . '.part' . $i;
+        }
+        return $paths;
     }
 
     public function store(Request $request)
