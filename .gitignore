@@ -42,6 +42,7 @@ Desktop.ini
 
 # ── Databases ───────────────────────────────────────────
 /database/*.sqlite
+!/database/database.sqlite
 
 # ── User content / uploads (not part of source) ─────────
 /public/uploads/*
