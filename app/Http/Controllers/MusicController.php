@@ -300,7 +300,7 @@ class MusicController extends Controller
                 'matched_artist' => $verdict['matched_artist'],
                 'response'       => json_encode($result),
             ]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             Log::error('ACRCloud scan failed for ' . $path . ': ' . $e->getMessage());
         }
     }

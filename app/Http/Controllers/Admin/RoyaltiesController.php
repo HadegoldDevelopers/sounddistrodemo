@@ -147,12 +147,35 @@ public function streamDetail(Request $request, StatReportService $service)
     
     public function approveEarnings(UserBalance $balance)
 {
-    $balance->update([
-        'status' => 'approved',
-        'updated_at' => now(),
-    ]);
-    
-    $balance->user->increment('wallet_balance', $balance->amount);
+    // Atomically flip pending → approved. The wallet is only credited if this
+    // call actually performed the transition, so double-clicks / concurrent
+    // requests can never credit the same earning twice.
+    $credited = \DB::transaction(function () use ($balance) {
+        $updated = \App\Models\UserBalance::query()
+            ->where('id', $balance->id)
+            ->where('status', 'pending')
+            ->update(['status' => 'approved', 'updated_at' => now()]);
+
+        if ($updated === 0) {
+            return false;
+        }
+
+        $user = \App\Models\User::query()
+            ->where('id', $balance->user_id)
+            ->lockForUpdate()
+            ->first();
+
+        if ($user) {
+            $user->wallet_balance += $balance->amount;
+            $user->save();
+        }
+
+        return true;
+    });
+
+    if (!$credited) {
+        return back()->with('error', 'Only pending earnings can be approved.');
+    }
 
     return back()->with('success', 'Earning approved successfully.');
 }
@@ -185,16 +208,16 @@ public function massApprove(Request $request)
 
 public function rejectEarnings(UserBalance $balance)
 {
-    // Only allow pending earnings to be rejected
-    if ($balance->status !== 'pending') {
-        
+    // Atomically flip pending → rejected. A race-safe guard means an
+    // already-processed earning can never be rejected twice.
+    $updated = \App\Models\UserBalance::query()
+        ->where('id', $balance->id)
+        ->where('status', 'pending')
+        ->update(['status' => 'rejected', 'updated_at' => now()]);
+
+    if ($updated === 0) {
         return back()->with('error', 'Only pending earnings can be rejected.');
     }
-
-    $balance->update([
-        'status' => 'rejected',
-        'updated_at' => now(),
-    ]);
 
     return back()->with('success', 'Earning rejected successfully.');
 }

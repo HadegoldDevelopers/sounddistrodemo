@@ -37,7 +37,7 @@ class LicenseEnforce
 
         try {
             $license->checkNow();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             \Log::error('License check failed: ' . $e->getMessage());
         }
 

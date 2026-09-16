@@ -117,7 +117,7 @@ if (!preg_match('/^09\d{8}$/', $phone)) {
             'user_id' => $user->id,
         ]);
 
-        return route('subscription.moneyunify.wait', [
+        return route('moneyunify.wait', [
             'transaction_id' => $transactionId,
         ]);
     }

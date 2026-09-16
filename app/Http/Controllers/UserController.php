@@ -109,6 +109,22 @@ class UserController extends Controller
 }
   public function showRelease(Project $project)
 {
+    // Ownership check: a user may only view their own releases (or releases
+    // created by artists in their label). Prevents IDOR across accounts.
+    $user = Auth::user();
+
+    $owner = $project->user;
+
+    if ($owner === null || $owner->id !== $user->id) {
+        $isLabelArtist = $user->role === 'label'
+            && $owner->role === 'artist'
+            && $owner->label_id === $user->label?->id;
+
+        if (!$isLabelArtist) {
+            abort(403, 'You do not have access to this release.');
+        }
+    }
+
     // Build artist + featured artists
     $mainArtists = $project->tracks->pluck('artist')->filter()->unique();
     $featured = $project->tracks

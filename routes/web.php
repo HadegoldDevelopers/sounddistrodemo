@@ -21,6 +21,7 @@ use App\Http\Controllers\StatsController;
     Route::get('/payment/callback/{gateway}', [PaymentController::class, 'handleCallback'])->name('payment.callback');
     Route::post('/webhook/paypal', [PaymentController::class, 'paypalWebhook'])->name('paypal.webhook');
     Route::post('/webhook/nowpayments', [PaymentController::class, 'handleNowPaymentCallback'])->name('nowpayments.webhook');
+    Route::post('/payment/coinpayments/ipn', [PaymentController::class, 'coinpaymentsIpn'])->name('coinpayments.ipn');
 
 
 Route::middleware(['auth', 'verified', 'sub', 'active'])->group(function () {
@@ -53,7 +54,6 @@ Route::middleware(['auth', 'verified', 'sub', 'active'])->group(function () {
     Route::post('/music/store', [MusicController::class, 'store'])->name('music.store');
     
     Route::post('/music/upload-cover', [MusicController::class, 'uploadCover'])->name('music.uploadCover');
-    Route::post('/music/upload-audio', [MusicController::class, 'uploadAudio'])->name('music.uploadAudio');
     Route::post('/music/upload-chunk', [MusicController::class, 'uploadChunk'])->name('music.uploadChunk');
     
 });
@@ -64,7 +64,6 @@ Route::middleware(['auth', 'verified'])->prefix('payment')->name('payment.')->gr
     Route::post('/process', [PaymentController::class, 'process'])->name('process');
     Route::get('/cancel', [PaymentController::class, 'cancel'])->name('cancel');
     Route::get('/manual', [PaymentController::class, 'manualInstructions'])->name('manual');
-    Route::post('/manual/submit', [PaymentController::class, 'submitManualPayment'])->name('manual.submit');
     Route::get('/moneyunify/wait/{transaction_id}', [PaymentController::class, 'wait'])->name('moneyunify.wait');
     Route::get('/moneyunify/check/{transaction_id}', [PaymentController::class, 'check'])->name('moneyunify.check');
     });

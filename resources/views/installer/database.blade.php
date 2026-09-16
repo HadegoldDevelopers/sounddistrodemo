@@ -84,10 +84,10 @@
 
             fetch('{{ route("installer.database.test") }}', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': data._token },
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': data._token },
                 body: JSON.stringify(data),
             })
-                .then(r => r.json())
+                .then(r => r.json().catch(() => ({ success: false, message: 'Server error (' + r.status + '). Check the logs.' })))
                 .then(res => {
                     if (res.success) {
                         status.innerHTML = '<span style="color:#86efac;">✓ ' + res.message + '</span>';

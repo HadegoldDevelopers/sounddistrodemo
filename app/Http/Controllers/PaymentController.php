@@ -169,9 +169,6 @@ public function manualInstructions(Request $request)
         case 'paypal':
             return $this->handlePaypalCallback($request);
 
-        case 'coinpayments':
-            return $this->handleCoinPaymentsCallback($request);
-
         default:
             return response()->json(['error' => 'Unsupported gateway'], 400);
     }

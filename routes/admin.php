@@ -52,8 +52,6 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
   Route::prefix('users')->name('labels.')->group(function () {
     Route::get('/', [AdminController::class, 'labels'])->name('all');
     Route::get('/artists', [AdminController::class, 'artists'])->name('artists');
-    Route::get('/pending', [AdminController::class, 'pendingApprovals'])->name('pending');
-    Route::get('/roles', [AdminController::class, 'roles'])->name('roles');
     Route::get('/{id}', [AdminController::class, 'show'])->name('show');
   });
 
@@ -192,15 +190,12 @@ Route::prefix('royalties')->name('royalties.')->group(function () {
      
      Route::post('/currencies', [SettingsController::class, 'storeCurrency'])->name('currencies.store');
 
-    Route::get('/currencies/{currency}/edit', [SettingsController::class, 'editCurrency'])->name('currencies.edit');
-
     Route::put('/currencies/{currency}', [SettingsController::class, 'updateCurrency'])->name('currencies.update');
 
     Route::delete('/currencies/{currency}', [SettingsController::class, 'destroyCurrency'])->name('currencies.destroy');
 
     Route::get('/payment', [PaymentGatewayController::class, 'edit'])->name('payment');
     Route::put('payment-gateways/update', [PaymentGatewayController::class, 'update'])->name('payment-gateways.update');
-    Route::get('/security', [SettingsController::class, 'security'])->name('security');
     Route::get('/terms', [SettingsController::class, 'editTerms'])
         ->name('terms');
     Route::post('/terms', [SettingsController::class, 'updateTerms'])

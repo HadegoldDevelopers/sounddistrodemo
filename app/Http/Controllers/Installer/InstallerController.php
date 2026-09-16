@@ -112,7 +112,7 @@ class InstallerController extends Controller
             $dsn = "mysql:host={$request->db_host};port={$request->db_port};dbname={$request->db_name}";
             $pdo = new PDO($dsn, $request->db_username, $request->db_password);
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return back()->withErrors([
                 'db_connection' => 'Could not connect to database: ' . $e->getMessage()
             ])->withInput();
@@ -305,7 +305,7 @@ class InstallerController extends Controller
             session()->forget(array_keys(session()->all()));
 
             return redirect()->route('installer.finish');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             \Log::error('Installer error: ' . $e->getMessage());
             return back()->withErrors([
                 'install' => 'Installation failed: ' . $e->getMessage()
@@ -346,7 +346,7 @@ class InstallerController extends Controller
             $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             return response()->json(['success' => true, 'message' => 'Connection successful!']);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
         }
     }

@@ -36,41 +36,50 @@ class WithdrawalController extends Controller
     ]);
 
     $user = Auth::user();
+    $amount = (float) $request->amount;
 
-    if ($request->amount > $user->wallet_balance) {
-        return back()->with('error', 'Insufficient balance.');
+    try {
+        $withdrawal = \DB::transaction(function () use ($request, $user, $amount) {
+            // Lock the user row so concurrent requests cannot double-spend
+            // the same wallet balance.
+            $locked = \App\Models\User::query()
+                ->where('id', $user->id)
+                ->lockForUpdate()
+                ->first();
+
+            if (!$locked || $amount > $locked->wallet_balance) {
+                throw new \RuntimeException('INSUFFICIENT_BALANCE');
+            }
+
+            $locked->wallet_balance -= $amount;
+            $locked->save();
+
+            $details = [];
+
+            if ($request->method === 'bank') {
+                $details = ['info' => $request->details];
+            } elseif ($request->method === 'paypal') {
+                $details = ['paypal_email' => $request->details];
+            } elseif ($request->method === 'crypto') {
+                $details = ['crypto_wallet' => $request->details];
+            }
+
+            return \App\Models\Withdrawal::create([
+                'user_id' => $locked->id,
+                'amount' => $amount,
+                'method' => $request->method,
+                'details' => $details,
+                'status' => 'pending',
+            ]);
+        });
+    } catch (\Exception $e) {
+        if ($e->getMessage() === 'INSUFFICIENT_BALANCE') {
+            return back()->with('error', 'Insufficient balance.');
+        }
+
+        throw $e;
     }
 
-    // Deduct from wallet
-    $user->wallet_balance -= $request->amount;
-    $user->save();
-
-    // Prepare details depending on method
-    $details = [];
-
-    if ($request->method === 'bank') {
-        // Keep user-entered bank info as freeform string
-        $details = ['info' => $request->details];
-    } elseif ($request->method === 'paypal') {
-        $details = [
-            'paypal_email' => $request->details,
-        ];
-    } elseif ($request->method === 'crypto') {
-        $details = [
-            'crypto_wallet' => $request->details,
-        ];
-    }
-
-    // Create withdrawal
-    $withdrawal = Withdrawal::create([
-        'user_id' => $user->id,
-        'amount' => $request->amount,
-        'method' => $request->method,
-        'details' => $details,
-        'status' => 'pending',
-    ]);
-
-    // Send notification to admin
     NotificationService::withdrawalRequested($withdrawal);
 
     return redirect()->route('royalties.index')

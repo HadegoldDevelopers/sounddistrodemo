@@ -30,36 +30,59 @@ class WithdrawalController extends Controller
         return view('admin.royalties.withdrawal-history', compact('withdrawals'));
     }
 
-// Approve Withdrawal
+// Approve Withdrawal (idempotent — only pending can be marked paid)
 public function approve(Withdrawal $withdrawal)
 {
-    // Update status
-    $withdrawal->update(['status' => 'paid']);
+    $updated = \DB::transaction(function () use ($withdrawal) {
+        return \App\Models\Withdrawal::query()
+            ->where('id', $withdrawal->id)
+            ->where('status', 'pending')
+            ->update(['status' => 'paid']);
+    });
 
-    // Notify user
+    if ($updated === 0) {
+        return back()->with('error', 'Only pending withdrawals can be approved.');
+    }
+
+    $withdrawal->status = 'paid';
     NotificationService::withdrawalApproved($withdrawal);
 
     return back()->with('success', 'Withdrawal approved.');
 }
 
-// Reject withdrawal + refund user
+// Reject withdrawal + refund user (transaction-safe, no double refund)
 public function reject(Withdrawal $withdrawal)
 {
-    // Prevent double refund
-    if ($withdrawal->status === 'paid') {
-        return back()->with('error', 'Paid withdrawals cannot be refunded.');
+    $refunded = \DB::transaction(function () use ($withdrawal) {
+        // Atomically flip pending → rejected. If another request already
+        // rejected (or it was paid), nothing is updated and no refund occurs.
+        $updated = \App\Models\Withdrawal::query()
+            ->where('id', $withdrawal->id)
+            ->where('status', 'pending')
+            ->update(['status' => 'rejected']);
+
+        if ($updated === 0) {
+            return false;
+        }
+
+        $user = \App\Models\User::query()
+            ->where('id', $withdrawal->user_id)
+            ->lockForUpdate()
+            ->first();
+
+        if ($user) {
+            $user->wallet_balance += $withdrawal->amount;
+            $user->save();
+        }
+
+        return true;
+    });
+
+    if (!$refunded) {
+        return back()->with('error', 'Paid or already-rejected withdrawals cannot be refunded.');
     }
 
-    $user = $withdrawal->user;
-
-    // Refund user
-    $user->wallet_balance += $withdrawal->amount;
-    $user->save();
-
-    // Update withdrawal status
-    $withdrawal->update(['status' => 'rejected']);
-
-    // Notify user
+    $withdrawal->status = 'rejected';
     NotificationService::withdrawalRejected($withdrawal);
 
     return back()->with('success', 'Withdrawal rejected and amount refunded to user.');

@@ -132,7 +132,7 @@ class LicenseService
         $cache = Setting::getValue('license_cache', '');
 
         if ($cache) {
-            $cached = json_decode($cache);
+            $cached = json_decode($cache, true);
 
             if (is_array($cached) && $cached['checked_at'] && (time() - (int) $cached['checked_at']) < 86400) {
                 return;
@@ -226,7 +226,7 @@ class LicenseService
             }
 
             return $payload;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             \Log::error('License server request failed: ' . $e->getMessage());
             return null;
         }

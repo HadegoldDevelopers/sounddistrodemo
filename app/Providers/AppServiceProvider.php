@@ -54,7 +54,7 @@ class AppServiceProvider extends ServiceProvider
         // buyer's copy of the code has no exemption rules to tamper with.
         try {
             app(\App\Services\LicenseService::class)->checkNow();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             \Log::error('Boot license check failed: ' . $e->getMessage());
         }
 
