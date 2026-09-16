@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class SettingsTableSeeder extends Seeder
 {
@@ -16,9 +17,9 @@ class SettingsTableSeeder extends Seeder
     {
         
 
-        \DB::table('settings')->delete();
+        DB::table('settings')->delete();
         
-        \DB::table('settings')->insert(array (
+        DB::table('settings')->insert(array (
             0 => 
             array (
                 'id' => 1,
@@ -79,7 +80,7 @@ class SettingsTableSeeder extends Seeder
             array (
                 'id' => 8,
                 'key' => 'enable_email_verification',
-                'value' => '0',
+                'value' => '1',
                 'created_at' => '2025-08-03 09:53:22',
                 'updated_at' => '2026-03-08 03:40:47',
             ),
@@ -129,7 +130,7 @@ Allow: /',
             array (
                 'id' => 14,
                 'key' => 'contact_phone',
-                'value' => NULL,
+                'value' => '+1 (555) 123-4567',
                 'created_at' => '2025-08-03 09:53:22',
                 'updated_at' => '2026-01-09 06:11:40',
             ),
@@ -137,7 +138,7 @@ Allow: /',
             array (
                 'id' => 15,
                 'key' => 'contact_address',
-                'value' => NULL,
+                'value' => 'Lourem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc ut laoreet tincidunt, nunc nisl aliquam nunc, eget aliquam nisl nunc vel nisl.',
                 'created_at' => '2025-08-03 09:53:22',
                 'updated_at' => '2026-01-09 06:11:40',
             ),
@@ -153,7 +154,7 @@ Allow: /',
             array (
                 'id' => 52,
                 'key' => 'instagram',
-                'value' => '',
+                'value' => 'https://www.instagram.com',
                 'created_at' => '2025-08-03 09:53:22',
                 'updated_at' => '2026-01-09 06:28:55',
             ),
@@ -161,7 +162,7 @@ Allow: /',
             array (
                 'id' => 63,
                 'key' => 'linkedin',
-                'value' => '',
+                'value' => 'https://www.linkedin.com',
                 'created_at' => '2025-08-03 09:53:22',
                 'updated_at' => '2026-01-09 06:36:18',
             ),
@@ -169,7 +170,7 @@ Allow: /',
             array (
                 'id' => 65,
                 'key' => 'twitter',
-                'value' => NULL,
+                'value' => 'https://www.twitter.com',
                 'created_at' => '2025-08-03 09:53:22',
                 'updated_at' => '2026-01-09 06:28:55',
             ),
@@ -177,7 +178,7 @@ Allow: /',
             array (
                 'id' => 66,
                 'key' => 'Facebook',
-                'value' => NULL,
+                'value' => 'https://www.facebook.com',
                 'created_at' => '2025-08-03 09:53:22',
                 'updated_at' => '2026-01-09 06:28:55',
             ),
@@ -185,7 +186,7 @@ Allow: /',
             array (
                 'id' => 67,
                 'key' => 'allow_label_registration',
-                'value' => '0',
+                'value' => '1',
                 'created_at' => '2025-08-03 09:53:22',
                 'updated_at' => '2026-01-30 01:51:57',
             ),
@@ -197,14 +198,7 @@ Allow: /',
                 'created_at' => '2025-08-03 09:53:22',
                 'updated_at' => '2026-03-08 03:40:29',
             ),
-            22 => 
-            array (
-                'id' => 69,
-                'key' => 'terms_pdf',
-                'value' => '',
-                'created_at' => '2026-01-09 09:00:43',
-                'updated_at' => '2026-01-09 09:29:19',
-            ),
+            
         ));
         
         

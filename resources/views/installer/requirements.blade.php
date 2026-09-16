@@ -4,7 +4,7 @@
 
 @section('content')
     <h2 class="card-title">Server Requirements</h2>
-    <p class="card-subtitle">Checking that your server meets all requirements to run DistroKit.</p>
+    <p class="card-subtitle">Checking that your server meets all requirements to run Distro Supawave.</p>
 
     {{-- PHP Extensions --}}
     <div class="section-title">PHP Extensions</div>
@@ -66,9 +66,9 @@
                 <strong>Fix permissions by running:</strong><br>
                 <code
                     style="font-size:12px; display:block; margin-top:8px; background:rgba(0,0,0,.3); padding:8px 12px; border-radius:6px;">
-                    chmod -R 775 storage bootstrap/cache public/temp<br>
-                    chown -R www-data:www-data storage bootstrap/cache
-                </code>
+                            chmod -R 775 storage bootstrap/cache public/temp<br>
+                            chown -R www-data:www-data storage bootstrap/cache
+                        </code>
             </div>
         </div>
     @endif

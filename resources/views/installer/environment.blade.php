@@ -14,8 +14,8 @@
 
         <div class="form-group">
             <label>Site Name <span class="req">*</span></label>
-            <input type="text" name="site_name" value="{{ old('site_name', 'DistroKit') }}" placeholder="My Distro Platform"
-                required>
+            <input type="text" name="site_name" value="{{ old('site_name', 'Distro Supawave') }}"
+                placeholder="My Distro Platform" required>
             <div class="field-hint">This appears in the header, emails, and browser tab.</div>
         </div>
 
@@ -24,12 +24,12 @@
                 <label>App URL <span class="req">*</span></label>
                 <input type="url" name="site_url" value="{{ old('site_url', request()->getSchemeAndHttpHost()) }}"
                     placeholder="https://yourdomain.com" required>
-                    <div class="field-hint">Example: https://yourdomain.com</div>
+                <div class="field-hint">Example: https://yourdomain.com</div>
             </div>
             <div class="form-group">
                 <label>Contact Email <span class="req">*</span></label>
-                <input type="email" name="contact_email" value="{{ old('contact_email') }}" placeholder="support@yourdomain.com"
-                    required>
+                <input type="email" name="contact_email" value="{{ old('contact_email') }}"
+                    placeholder="support@yourdomain.com" required>
                 <div class="field-hint">Used for support contact and system emails.</div>
             </div>
             <div class="form-group">
@@ -86,7 +86,7 @@
 
         <div class="form-group">
             <label>From Name</label>
-            <input type="text" name="mail_name" value="{{ old('mail_name') }}" placeholder="DistroKit Platform">
+            <input type="text" name="mail_name" value="{{ old('mail_name') }}" placeholder="Distro Supawave Platform">
             <div class="field-hint">Name that appears in the "From" field of emails sent to users.</div>
         </div>
 
@@ -107,4 +107,3 @@
         toggleMailFields();
     </script>
 @endpush
-

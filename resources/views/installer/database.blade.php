@@ -12,7 +12,7 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Database Host <span class="req">*</span></label>
-                <input type="text" name="db_host" value="{{ old('db_host', '127.0.0.1') }}" placeholder="127.0.0.1" required
+                <input type="text" name="db_host" value="{{ old('db_host', 'localhost') }}" placeholder="localhost" required
                     class="{{ $errors->has('db_host') ? 'error-field' : '' }}">
                 @error('db_host')<div class="field-error">{{ $message }}</div>@enderror
             </div>
@@ -24,7 +24,7 @@
 
         <div class="form-group">
             <label>Database Name <span class="req">*</span></label>
-            <input type="text" name="db_name" value="{{ old('db_name') }}" placeholder="distrokit_db" required
+            <input type="text" name="db_name" value="{{ old('db_name') }}" placeholder="distrosupawave_db" required
                 class="{{ $errors->has('db_name') ? 'error-field' : '' }}">
             <div class="field-hint">The database must already be created on your server.</div>
             @error('db_name')<div class="field-error">{{ $message }}</div>@enderror

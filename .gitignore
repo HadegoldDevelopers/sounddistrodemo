@@ -70,3 +70,9 @@ Desktop.ini
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# ── CodeCanyon package artifacts (keep out of git) ──────
+SoundDistro-*.zip
+DistroSupawave-*.zip
+*.zip
+/preview/

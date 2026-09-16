@@ -4,8 +4,9 @@
 
 @section('content')
     <div style="text-align:center; padding: 20px 0;">
-        <div style="font-size:64px; margin-bottom:20px;">🎵</div>
-        <h1 class="card-title" style="font-size:28px; margin-bottom:10px;">Welcome to {{ config('app.name', 'DistroKit') }}</h1>
+    
+        <h1 class="card-title" style="font-size:28px; margin-bottom:10px;">Welcome to
+            {{ config('app.name', 'Distro Supawave') }}</h1>
         <p class="card-subtitle" style="font-size:15px; max-width:480px; margin:0 auto 32px;">
             The music distribution platform installer will guide you through setting up your application in just a few
             steps.
@@ -17,7 +18,7 @@
                 <div style="font-size:13px; color:var(--muted);">Get up and running in under 5 minutes</div>
             </div>
             <div style="background:var(--surface2); border:1px solid var(--border); border-radius:10px; padding:18px;">
-               
+
                 <div style="font-weight:600; font-size:14px; margin-bottom:6px;">Secure</div>
                 <div style="font-size:13px; color:var(--muted);">Automatically generates encryption keys</div>
             </div>
