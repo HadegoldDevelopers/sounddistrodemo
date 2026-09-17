@@ -159,7 +159,6 @@
         ['route' => 'admin.settings.general',     'label' => 'General'],
         ['route' => 'admin.settings.payment',     'label' => 'Payment'],
         ['route' => 'admin.settings.currencies',  'label' => 'Currencies'],
-        ['route' => 'admin.license',              'label' => 'License'],
 
         // CMS Pages
         ['route' => 'admin.settings.terms',        'label' => 'Terms & Conditions'],

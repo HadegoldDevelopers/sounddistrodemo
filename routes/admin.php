@@ -21,10 +21,6 @@ use App\Http\Controllers\Admin\HomepageContentController;
 Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
 
-// License restore — reachable even when the admin area is blocked
-Route::get('/admin/license', [AdminController::class, 'showLicenseForm'])->name('admin.license');
-Route::post('/admin/license', [AdminController::class, 'updateLicense'])->name('admin.license.update');
-
 // Authenticated Admin Routes
 Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(function () {
 

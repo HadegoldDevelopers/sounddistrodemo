@@ -4,7 +4,7 @@
 
 @section('content')
     <h2 class="card-title">Verify Your Purchase</h2>
-    <p class="card-subtitle">Enter your CodeCanyon purchase code to activate this installation. The code is verified once against the license server.</p>
+    <p class="card-subtitle">Enter your CodeCanyon purchase code. It is verified once against Envato's official API. If verification is not configured, you can continue without it.</p>
 
     <form method="POST" action="{{ route('installer.license.save') }}">
         @csrf

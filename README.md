@@ -84,6 +84,17 @@ php artisan storage:link
 
 Create your `.env` from `.env.example` and set your database credentials, SMTP mail, and payment keys. Full configuration details are in [the documentation](documentation/index.html).
 
+## Purchase-code verification
+
+At install time the web installer verifies the buyer's CodeCanyon purchase code directly against **Envato's official API** (`api.envato.com`) — there is no third-party license server, no phone-home, and no site lockdown. The app runs fully standalone after install.
+
+To enable verification, set these in your `.env` (optional — leave empty to skip verification):
+
+```
+ENVATO_PERSONAL_TOKEN=your-envato-personal-api-token
+ENVATO_ITEM_ID=your-codecanyon-item-id
+```
+
 ## Tech Stack
 
 - Laravel 12, PHP 8.2+

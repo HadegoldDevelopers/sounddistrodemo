@@ -1423,42 +1423,35 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
 
             <!-- License -->
             <div class="section" id="license">
-                <h2><i class="fa-solid fa-key"></i> License &amp; Protection</h2>
+                <h2><i class="fa-solid fa-key"></i> Purchase-Code Verification</h2>
 
-                <p>Distro Supawave includes a built‑in license verification system that validates each installation using the buyer’s CodeCanyon
-                purchase code. This prevents unauthorized use and ensures each installation is properly licensed.</p>
+                <p>Distro Supawave verifies the buyer&rsquo;s CodeCanyon purchase code at install time directly against
+                <strong>Envato&rsquo;s official API</strong> (<code>api.envato.com</code>). There is no third-party license
+                server, no phone-home, no domain-locking, and no site lockdown &mdash; the application runs fully
+                standalone once installed.</p>
 
-                <h3>Domain Binding</h3>
-                <p>Each purchase code is automatically bound to a limited number of domains:</p>
-                <ul>
-                    <li><strong>Regular License</strong> — valid on <strong>1 domain</strong></li>
-                    <li><strong>Extended License</strong> — valid on <strong>3 domains</strong></li>
-                </ul>
-                <p>The first domain that activates the purchase code becomes registered. Additional domains beyond the limit are rejected.</p>
-
-                <h3>How It Behaves</h3>
+                <h3>How It Works</h3>
 
                 <p><strong>On installation:</strong> the installer&rsquo;s <em>License Verification</em> step asks the
-                    buyer for their CodeCanyon purchase code and verifies it against the license server before
-                    installation can proceed.</p>
+                    buyer for their CodeCanyon purchase code and verifies it once against Envato&rsquo;s API before
+                    installation proceeds. The result is stored locally.</p>
 
-             <p><strong>If the license becomes invalid:</strong></p>
-                
+                <p><strong>If verification is not configured:</strong> when no <code>ENVATO_PERSONAL_TOKEN</code> is set
+                    in <code>.env</code>, verification is skipped and installation continues without it &mdash; buyers are
+                    never locked out.</p>
 
-                <p><strong>Recovery:</strong> the only way to restore access is to enter a valid purchase code on the
-                    admin license page at <code>/admin/license</code>.</p>
+                <h3>Configuration</h3>
+                <p>To enable purchase-code verification, set these in <code>.env</code> (optional):</p>
+                <ul>
+                    <li><code>ENVATO_PERSONAL_TOKEN</code> — your Envato personal API token</li>
+                    <li><code>ENVATO_ITEM_ID</code> — your CodeCanyon item id (ensures the code belongs to this item)</li>
+                </ul>
 
-                <div class="alert alert-warning">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <div><strong>Note for buyers:</strong> Local development environments (localhost, 127.0.0.1, <code>*.test</code>,
-                    <code>*.local</code>) are automatically allowed and do not require
-                    activation. 
-                    </div>
+                <div class="alert alert-info">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <div>Verification only contacts Envato&rsquo;s official API. The application never depends on any
+                    author-controlled server and continues to work even if the API is temporarily unreachable.</div>
                 </div>
-
-                <h3>Admin License Page</h3>
-                <p>Admins can review and update the license under <strong>Settings → License</strong>
-                </p>
             </div>
 
             <!-- Settings -->

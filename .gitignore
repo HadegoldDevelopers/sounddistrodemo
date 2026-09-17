@@ -78,3 +78,7 @@ DistroSupawave-*.zip
 *.zip
 /preview/
 !/storage/framework/schedule/.gitignore
+
+# Leaked error logs (removed for CodeCanyon)
+error_log
+*.error_log

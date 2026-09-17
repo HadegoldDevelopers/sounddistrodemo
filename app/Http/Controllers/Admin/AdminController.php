@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\AnalyticsService;
-use App\Services\LicenseService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -27,19 +26,11 @@ class AdminController extends Controller
 {
     public function showLoginForm()
     {
-        if (app(LicenseService::class)->isAdminBlocked()) {
-            return redirect()->route('admin.license');
-        }
-
         return view('admin.auth.login');
     }
 
     public function login(Request $request)
     {
-        if (app(LicenseService::class)->isAdminBlocked()) {
-            return redirect()->route('admin.license');
-        }
-
         $credentials = $request->only('email', 'password');
 
         if (Auth::guard('admin')->attempt($credentials)) {
@@ -51,42 +42,6 @@ class AdminController extends Controller
         ]);
     }
 
-    public function showLicenseForm()
-    {
-        return view('admin.license');
-    }
-
-    public function updateLicense(Request $request)
-    {
-        $request->validate([
-            'purchase_code' => 'required|string|max:100',
-        ]);
-
-        $license = app(LicenseService::class);
-
-        if (!$license->restore($request->purchase_code)) {
-            return back()->with('error', $this->licenseErrorMessage($license->lastReason));
-        }
-
-        return back()->with('success', 'License verified. You can now log in.');
-    }
-
-    /**
-     * Human-friendly message for a license server rejection reason.
-     *
-     * @param  string|null  $reason
-     * @return string
-     */
-    protected function licenseErrorMessage(?string $reason): string
-    {
-        return match ($reason) {
-            'domain_limit' => 'This purchase code is already registered to its maximum number of domains.',
-            'envato_error' => 'The purchase code could not be verified with Envato right now. Please try again later.',
-            'server_unreachable' => 'The license server could not be reached. Please check your connection.',
-            default => 'Invalid purchase code. Please check and try again.',
-        };
-    }
-    
     public function edit()
     {
         $admin = Auth::guard('admin')->user();

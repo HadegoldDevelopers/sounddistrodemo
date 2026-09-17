@@ -204,11 +204,16 @@ class InstallerController extends Controller
             $reason = $license->lastReason;
 
             $message = match ($reason) {
-                'domain_limit' => 'This purchase code is already registered to its maximum number of domains.',
                 'envato_error' => 'The purchase code could not be verified with Envato right now. Please try again later.',
-                'server_unreachable' => 'The license server could not be reached. Please check your connection.',
+                'wrong_item' => 'This purchase code does not belong to Distro Supawave.',
+                'unavailable' => 'Purchase-code verification is not configured. You can continue without it.',
                 default => 'Invalid purchase code. Please check and try again.',
             };
+
+            if ($reason === 'unavailable') {
+                session()->put('installer.purchase_code', $request->purchase_code);
+                return redirect()->route('installer.admin');
+            }
 
             return back()->withErrors(['purchase_code' => $message]);
         }

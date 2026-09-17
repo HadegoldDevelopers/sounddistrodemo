@@ -8,7 +8,6 @@ use App\Http\Middleware\RoleMiddleware;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\CheckUserSubscription;
 use App\Http\Middleware\CheckUserActive;
-use App\Http\Middleware\LicenseEnforce;
 
 // ── Bootstrap .env guard ─────────────────────────────────────────────
 // On a fresh install there may be no .env (and therefore no APP_KEY).
@@ -49,10 +48,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-
-        $middleware->use([
-            LicenseEnforce::class,
-        ]);
 
         $middleware->alias([
             'admin'           => IsAdmin::class,

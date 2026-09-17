@@ -1,4 +1,0 @@
-[25-May-2026 17:52:08 UTC] PHP Fatal error:  Uncaught Error: Class "Illuminate\Database\Eloquent\Factories\Factory" not found in /home/lanemsco/public_html/database/factories/UserFactory.php:12
-Stack trace:
-#0 {main}
-  thrown in /home/lanemsco/public_html/database/factories/UserFactory.php on line 12

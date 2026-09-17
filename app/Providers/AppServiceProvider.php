@@ -49,15 +49,6 @@ class AppServiceProvider extends ServiceProvider
             return;
         }
 
-        // Defense-in-depth license re-check (cached 24h). The license server
-        // decides whether the requesting domain is a local/dev host; the
-        // buyer's copy of the code has no exemption rules to tamper with.
-        try {
-            app(\App\Services\LicenseService::class)->checkNow();
-        } catch (\Exception $e) {
-            \Log::error('Boot license check failed: ' . $e->getMessage());
-        }
-
         // Force HTTPS if enabled
         if (Setting::getValue('force_https', 0)) {
             URL::forceScheme('https');
