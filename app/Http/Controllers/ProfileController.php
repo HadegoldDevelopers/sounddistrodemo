@@ -45,7 +45,7 @@ class ProfileController extends Controller
 
             if ($request->hasFile('logo')) {
                 $file = $request->file('logo');
-                $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+                $filename = uniqid() . '.' . $file->extension();
 
                 $file->move(public_path('logos'), $filename);
 
@@ -88,7 +88,8 @@ class ProfileController extends Controller
             // PROFILE IMAGE
             if ($request->hasFile('profile_image')) {
                 $file = $request->file('profile_image');
-                $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+                
+                $filename = uniqid() . '.' . $file->extension();
 
                 $file->move(public_path('profile_images'), $filename);
 

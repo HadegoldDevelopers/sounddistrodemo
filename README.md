@@ -23,19 +23,62 @@ Distro Supawave is a white-label music distribution platform built with **Larave
 - Apache or Nginx
 - Composer **2.0+**
 
-## Installation
+## Installation (cPanel / Shared Hosting)
 
-The package includes the `vendor/` folder, so no Composer/SSH is required — works on any cPanel/shared host.
+The package is **fully pre-installable** — it ships with the compiled `vendor/` directory and pre-built frontend assets (`public/build`), so **no Composer, SSH, or Node.js is required**. It runs on any cPanel/shared host with PHP 8.2+.
+
+### 1. Upload the files
+1. Unzip the package on your computer. You'll get a `sounddistro/` folder.
+2. In cPanel → **File Manager**, navigate to your web root:
+   - **Main domain** → `public_html/`
+   - **Addon/subdomain** → the subdomain's document root (e.g. `subdomain/`)
+3. Upload the **contents** of the `sounddistro/` folder (not the folder itself) into that directory, **or** upload the whole folder so your app lives at e.g. `public_html/sounddistro/`.
+
+### 2. Create the database
+1. In cPanel → **MySQL® Databases**, create a database and a database user.
+2. Assign the user to the database with **ALL PRIVILEGES**.
+3. Keep the database name, username, and password ready.
+
+### 3. Set permissions
+Make these folders writable (set to `755`/`775` as your host allows):
+- `storage/` and everything inside it
+- `bootstrap/cache/`
+- `public/songs`, `public/covers`, `public/profile_images`, `public/temp`
+
+### 4. Run the web installer
+Visit your domain. You'll be redirected to the **web installer** at `/install` (e.g. `https://yourdomain.com/install`). It walks you through:
+1. **Requirements** — PHP version & extensions check
+2. **Database** — enter the credentials from step 2
+3. **Environment** — app name, URL, mail settings
+4. **License** — your CodeCanyon purchase code
+5. **Admin account** — create your admin login
+
+The installer creates the `.env` file, runs the database migrations/seeds, and sets everything up automatically.
+
+> If you are **not** redirected to the installer, it may already be configured. Delete the `storage/installed` file (if present) and refresh.
+
+### Alternative: manual setup (with SSH)
+If you have shell access you can set things up manually instead:
 
 ```bash
-# 1. Upload the package contents to your domain (public_html or the domain root)
-# 2. Copy the env template (or leave it — the web installer creates it automatically)
 cp .env.example .env
+php artisan key:generate
+# edit .env with your DB credentials, then:
+php artisan migrate --seed
+php artisan storage:link
 ```
 
-Then visit your domain — you'll be redirected to the web installer at `/install`. The installer detects a missing `.env`, clones `.env.example`, and handles requirements, database, environment, license, and admin setup for you.
+> Optional rebuilds — only needed if you changed source: `composer install --optimize-autoloader --no-dev` (vendor) or `npm install && npm run build` (frontend).
 
-> Optional: if you have SSH, you can instead run `composer install --optimize-autoloader --no-dev` to rebuild `vendor/`.
+## What's included in the package
+
+- Full Laravel 12 application source (`app/`, `config/`, `routes/`, `resources/`, `database/`, `public/`)
+- Pre-compiled **`vendor/`** directory — no Composer needed
+- Pre-built frontend assets in **`public/build/`** — no Node/npm needed
+- Root **`.htaccess`** for cPanel/LiteSpeed routing + `public/.htaccess`
+- **`documentation/`** — full HTML user/admin documentation
+- 6-step **web installer** for one-click setup
+- `.env.example`, `composer.json`/`composer.lock`, `package.json`/`package-lock.json`, `artisan`
 
 ## Configuration
 

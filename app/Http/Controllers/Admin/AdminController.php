@@ -388,6 +388,20 @@ public function artists()
     return view('admin.users.artist', compact('artists'));
 }
 
+public function show($id)
+{
+    $label = Label::with(['user', 'artist.user'])
+        ->where('user_id', $id)
+        ->first();
+
+    if (!$label) {
+        return redirect()->route('admin.labels.all')
+            ->with('error', 'Label not found.');
+    }
+
+    return view('admin.users.show', compact('label'));
+}
+
 public function editArtist($id)
 {
     $artist = Artist::with('user', 'label')->findOrFail($id);
