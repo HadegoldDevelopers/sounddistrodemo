@@ -25,7 +25,7 @@ Distro Supawave is a white-label music distribution platform built with **Larave
 
 ## Installation (cPanel / Shared Hosting)
 
-The package is **fully pre-installable** — it ships with the compiled `vendor/` directory and pre-built frontend assets (`public/build`), so **no Composer, SSH, or Node.js is required**. It runs on any cPanel/shared host with PHP 8.2+.
+The package is **fully pre-installable** — it ships with the compiled `vendor/` directory and pre-built frontend assets (`public/temp`), so **no Composer, SSH, or Node.js is required**. It runs on any cPanel/shared host with PHP 8.2+.
 
 ### 1. Upload the files
 1. Unzip the package on your computer. You'll get a `sounddistro/` folder.
@@ -74,7 +74,7 @@ php artisan storage:link
 
 - Full Laravel 12 application source (`app/`, `config/`, `routes/`, `resources/`, `database/`, `public/`)
 - Pre-compiled **`vendor/`** directory — no Composer needed
-- Pre-built frontend assets in **`public/build/`** — no Node/npm needed
+- Pre-built frontend assets in **`public/temp/`** — no Node/npm needed
 - Root **`.htaccess`** for cPanel/LiteSpeed routing + `public/.htaccess`
 - **`documentation/`** — full HTML user/admin documentation
 - 6-step **web installer** for one-click setup

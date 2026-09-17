@@ -11,8 +11,8 @@ export default defineConfig({
       refresh: true,
     }),
   ],
-  build: {
-    outDir: 'public/build',
+build: {
+    outDir: 'public/temp',
     emptyOutDir: true,
     manifest: 'manifest.json',
     assetsDir: 'assets',
