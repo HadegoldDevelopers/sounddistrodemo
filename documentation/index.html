@@ -504,7 +504,7 @@
             <a href="#payments"><i class="fa-solid fa-credit-card"></i> Payment Gateways</a>
             <a href="#emails"><i class="fa-solid fa-envelope"></i> Email Notifications</a>
             <a href="#homepage"><i class="fa-solid fa-pen-square"></i> Homepage Content</a>
-            <a href="#license"><i class="fa-solid fa-key"></i> License &amp; Protection</a>
+            <a href="#license"><i class="fa-solid fa-key"></i> Licensing</a>
             <a href="#settings"><i class="fa-solid fa-sliders"></i> Admin Settings</a>
 
             <div class="sidebar-section">Support</div>
@@ -546,7 +546,7 @@
                     <li><a href="#payments">Payment Gateways</a></li>
                     <li><a href="#emails">Email Notifications</a></li>
                     <li><a href="#homepage">Homepage Content</a></li>
-                    <li><a href="#license">License &amp; Protection</a></li>
+                    <li><a href="#license">Licensing</a></li>
                     <li><a href="#settings">Admin Settings</a></li>
                     <li><a href="#faq">FAQ</a></li>
                     <li><a href="#support">Get Support</a></li>
@@ -646,7 +646,7 @@
             <!-- Installation -->
             <div class="section" id="installation">
                 <h2><i class="fa-solid fa-download"></i> Installation</h2>
-                <p>Distro Supawave includes a <strong>6-step web installer</strong> that handles the entire setup
+                <p>Distro Supawave includes a <strong>web installer</strong> that handles the entire setup
                     process for
                     you. Follow these steps carefully.</p>
 
@@ -686,7 +686,7 @@ composer install --optimize-autoloader --no-dev</code></pre>
                 <p>Once files are uploaded and Composer has run when necessary, visit your domain in a browser.</p>
                 <pre><code>https://yourdomain.com/install</code></pre>
 
-                <p>The installer has <strong>6 steps</strong>:</p>
+                <p>The installer has <strong>4 steps</strong>:</p>
 
                 <ol class="step-list">
                     <li>
@@ -710,14 +710,6 @@ composer install --optimize-autoloader --no-dev</code></pre>
                             <strong>Site &amp; Email Settings</strong>
                             Enter your site name, and support email and SMTP email settings. The site URL must match
                             your actual domain exactly (e.g. <code>https://yourdomain.com</code>).
-                        </div>
-                    </li>
-                    
-                    <li>
-                        <div class="step-content">
-                            <strong>License Verification</strong>
-                            Enter your CodeCanyon <strong>purchase code</strong> See the <a
-                                href="#license">License &amp; Protection</a> section for details.
                         </div>
                     </li>
 
@@ -862,7 +854,6 @@ RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
                     <li>Go to <strong>Pricing</strong> and create your subscription plans</li>
                     <li>Go to <strong>Settings → Terms</strong> and upload your Terms &amp; Conditions PDF</li>
                     <li>Go to <strong>Settings → Privacy Policy</strong> and write your privacy policy</li>
-                    <li>Review the <strong>Settings → License</strong> page to confirm your purchase code is stored</li>
                 </ol>
 
                 <h3>SMTP Email Configuration</h3>
@@ -1423,35 +1414,15 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
 
             <!-- License -->
             <div class="section" id="license">
-                <h2><i class="fa-solid fa-key"></i> Purchase-Code Verification</h2>
+                <h2><i class="fa-solid fa-key"></i> Licensing</h2>
 
-                <p>Distro Supawave verifies the buyer&rsquo;s CodeCanyon purchase code at install time directly against
-                <strong>Envato&rsquo;s official API</strong> (<code>api.envato.com</code>). There is no third-party license
-                server, no phone-home, no domain-locking, and no site lockdown &mdash; the application runs fully
-                standalone once installed.</p>
+                <p>Distro Supawave is distributed as a <strong>fully standalone</strong> application. It does <strong>not</strong>
+                include any purchase-code or license verification &mdash; there is no license server, no phone-home,
+                no domain-locking, and no activation requirement. After installation the application runs entirely
+                on the buyer&rsquo;s own hosting with no external dependencies.</p>
 
-                <h3>How It Works</h3>
-
-                <p><strong>On installation:</strong> the installer&rsquo;s <em>License Verification</em> step asks the
-                    buyer for their CodeCanyon purchase code and verifies it once against Envato&rsquo;s API before
-                    installation proceeds. The result is stored locally.</p>
-
-                <p><strong>If verification is not configured:</strong> when no <code>ENVATO_PERSONAL_TOKEN</code> is set
-                    in <code>.env</code>, verification is skipped and installation continues without it &mdash; buyers are
-                    never locked out.</p>
-
-                <h3>Configuration</h3>
-                <p>To enable purchase-code verification, set these in <code>.env</code> (optional):</p>
-                <ul>
-                    <li><code>ENVATO_PERSONAL_TOKEN</code> — your Envato personal API token</li>
-                    <li><code>ENVATO_ITEM_ID</code> — your CodeCanyon item id (ensures the code belongs to this item)</li>
-                </ul>
-
-                <div class="alert alert-info">
-                    <i class="fa-solid fa-circle-info"></i>
-                    <div>Verification only contacts Envato&rsquo;s official API. The application never depends on any
-                    author-controlled server and continues to work even if the API is temporarily unreachable.</div>
-                </div>
+                <p>The 4-step web installer walks the buyer through requirements, database, environment, and admin
+                account creation only. No license or purchase-code step is involved.</p>
             </div>
 
             <!-- Settings -->
@@ -1492,10 +1463,6 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
                         <td><strong>Refund Policy</strong></td>
                         <td>Write refund policy using the built-in rich text editor</td>
                     </tr>
-                    <tr>
-                        <td><strong>License</strong></td>
-                        <td>View and update the installation purchase code</td>
-                    </tr>
                 </table>
             </div>
 
@@ -1527,12 +1494,6 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
                 <p>Yes. Every upload is fingerprinted through ACRCloud (see <a href="#copyright">Copyright Scanner</a>).
                     Matches are flagged in the admin release queue so you can reject them before they are distributed.
                     ACRCloud offers a free tier of 100 identifications per month.</p>
-
-                <h3>What happens if my license becomes invalid?</h3>
-                <p>After 1&ndash;2 failed checks the admin area is blocked (the public site keeps working). After 3+
-                    checks the site enters full lockdown with a maintenance page. Enter a valid purchase code on
-                    <code>/admin/license</code> to restore access. See <a href="#license">License &amp; Protection</a>.
-                </p>
 
                 <h3>Can I customise the landing page without editing code?</h3>
                 <p>Yes. Use <strong>Website → Homepage Content</strong> in the admin panel to edit all landing page

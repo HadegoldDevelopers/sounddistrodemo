@@ -174,57 +174,11 @@ class InstallerController extends Controller
             'installer.mail_name'     => $request->mail_name,
         ]);
 
-        return redirect()->route('installer.license');
-    }
-
-    // ─────────────────────────────────────────────
-    // STEP 4 — License
-    // ─────────────────────────────────────────────
-    public function license()
-    {
-        if ($this->isInstalled()) return redirect('/');
-
-        if (!session('installer.site_name')) {
-            return redirect()->route('installer.environment')
-                ->with('error', 'Please complete environment setup first.');
-        }
-
-        return view('installer.license');
-    }
-
-    public function licenseSave(Request $request)
-    {
-        $request->validate([
-            'purchase_code' => 'required|string|max:100',
-        ]);
-
-        $license = app(\App\Services\LicenseService::class);
-
-        if (!$license->verifyOnInstall($request->purchase_code)) {
-            $reason = $license->lastReason;
-
-            $message = match ($reason) {
-                'envato_error' => 'The purchase code could not be verified with Envato right now. Please try again later.',
-                'wrong_item' => 'This purchase code does not belong to Distro Supawave.',
-                'unavailable' => 'Purchase-code verification is not configured. You can continue without it.',
-                default => 'Invalid purchase code. Please check and try again.',
-            };
-
-            if ($reason === 'unavailable') {
-                session()->put('installer.purchase_code', $request->purchase_code);
-                return redirect()->route('installer.admin');
-            }
-
-            return back()->withErrors(['purchase_code' => $message]);
-        }
-
-        session()->put('installer.purchase_code', $request->purchase_code);
-
         return redirect()->route('installer.admin');
     }
 
     // ─────────────────────────────────────────────
-    // STEP 5 — Admin Account
+    // STEP 4 — Admin Account
     // ─────────────────────────────────────────────
     public function admin()
     {
@@ -278,22 +232,14 @@ class InstallerController extends Controller
             \App\Models\Setting::setValue('site_url', session('installer.site_url'));
             \App\Models\Setting::setValue('contact_email', session('installer.contact_email'));
 
-            // 6. Persist the verified license
-            if ($code = session('installer.purchase_code')) {
-                \App\Models\Setting::setValue('license_code', $code);
-                \App\Models\Setting::setValue('license_failures', 0);
-                \App\Models\Setting::setValue('license_state', 'valid');
-                \App\Models\Setting::setValue('license_cache', json_encode(['checked_at' => time(), 'valid' => true]));
-            }
-
-            // 7. Create admin account
+            // 6. Create admin account
             \App\Models\Admin::create([
                 'name'     => $request->admin_name,
                 'email'    => $request->admin_email,
                 'password' => Hash::make($request->admin_password),
             ]);
 
-            // 8. Create installed lock file
+            // 7. Create installed lock file
             File::put(storage_path('installed'), json_encode([
                 'installed_at' => now()->toIso8601String(),
                 'version'      => config('app.version', '1.0.0'),
@@ -301,12 +247,12 @@ class InstallerController extends Controller
 
             SitemapGenerator::generate();
 
-            // 9. Clear opcache if available
+            // 8. Clear opcache if available
             if (function_exists('opcache_reset')) {
                 opcache_reset();
             }
 
-            // 10. Clear installer session
+            // 9. Clear installer session
             session()->forget(array_keys(session()->all()));
 
             return redirect()->route('installer.finish');

@@ -13,8 +13,7 @@ Distro Supawave is a white-label music distribution platform built with **Larave
 - **Streaming stats** — store-by-store breakdowns, country filters, monthly trends, manual admin entry
 - **Payment gateways** — PayPal, Paystack, CoinPayments, NowPayments, MoneyUnify, and Manual
 - **Homepage CMS** — edit the entire landing page from the admin panel (hero, features, artists, CTA)
-- **License enforcement** — CodeCanyon purchase-code verification with 24h re-checks and escalation (1–2 failures blocks admin, 3+ full lockdown)
-- **6-step web installer** — requirements check, database setup, environment, license, admin account
+- **4-step web installer** — requirements check, database setup, environment, and admin account
 
 ## Requirements
 
@@ -50,8 +49,7 @@ Visit your domain. You'll be redirected to the **web installer** at `/install` (
 1. **Requirements** — PHP version & extensions check
 2. **Database** — enter the credentials from step 2
 3. **Environment** — app name, URL, mail settings
-4. **License** — your CodeCanyon purchase code
-5. **Admin account** — create your admin login
+4. **Admin account** — create your admin login
 
 The installer creates the `.env` file, runs the database migrations/seeds, and sets everything up automatically.
 
@@ -77,23 +75,12 @@ php artisan storage:link
 - Pre-built frontend assets in **`public/temp/`** — no Node/npm needed
 - Root **`.htaccess`** for cPanel/LiteSpeed routing + `public/.htaccess`
 - **`documentation/`** — full HTML user/admin documentation
-- 6-step **web installer** for one-click setup
+- **web installer** for one-click setup
 - `.env.example`, `composer.json`/`composer.lock`, `package.json`/`package-lock.json`, `artisan`
 
 ## Configuration
 
 Create your `.env` from `.env.example` and set your database credentials, SMTP mail, and payment keys. Full configuration details are in [the documentation](documentation/index.html).
-
-## Purchase-code verification
-
-At install time the web installer verifies the buyer's CodeCanyon purchase code directly against **Envato's official API** (`api.envato.com`) — there is no third-party license server, no phone-home, and no site lockdown. The app runs fully standalone after install.
-
-To enable verification, set these in your `.env` (optional — leave empty to skip verification):
-
-```
-ENVATO_PERSONAL_TOKEN=your-envato-personal-api-token
-ENVATO_ITEM_ID=your-codecanyon-item-id
-```
 
 ## Tech Stack
 

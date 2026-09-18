@@ -1,5 +1,5 @@
 @extends('installer.layout')
-@php $currentStep = 5; @endphp
+@php $currentStep = 4; @endphp
 @section('title', 'Admin Account')
 
 @section('content')
@@ -60,7 +60,7 @@
                 </div>
 
      <div class="btn-row">
-         <a href="{{ route('installer.license') }}" class="btn btn-outline">← Back</a>
+         <a href="{{ route('installer.environment') }}" class="btn btn-outline">← Back</a>
 
          <button type="submit" id="installBtn" class="btn btn-primary">
     Install Now

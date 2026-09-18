@@ -35,9 +35,4 @@ return [
         ],
     ],
 
-    'envato' => [
-        'token'   => env('ENVATO_PERSONAL_TOKEN'),
-        'item_id' => env('ENVATO_ITEM_ID'),
-    ],
-
 ];

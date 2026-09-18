@@ -20,15 +20,11 @@ Route::prefix('install')->name('installer.')->middleware(['web', 'installer.chec
   Route::get('/environment',         [InstallerController::class, 'environment'])->name('environment');
   Route::post('/environment',        [InstallerController::class, 'environmentSave'])->name('environment.save');
 
-  // Step 4 — License
-  Route::get('/license',             [InstallerController::class, 'license'])->name('license');
-  Route::post('/license',            [InstallerController::class, 'licenseSave'])->name('license.save');
-
-  // Step 5 — Admin Account
+  // Step 4 — Admin Account
   Route::get('/admin-account',       [InstallerController::class, 'admin'])->name('admin');
   Route::post('/admin-account',      [InstallerController::class, 'adminSave'])->name('admin.save');
 
-  // Step 6 — Finish
+  // Step 5 — Finish
   Route::get('/finish',              [InstallerController::class, 'finish'])->name('finish');
 });
 
