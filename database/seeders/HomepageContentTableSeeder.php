@@ -34,7 +34,7 @@ class HomepageContentTableSeeder extends Seeder
             ],
 
             'labels_title'    => 'Built for Labels. Trusted by Artists.',
-            'labels_text'     => 'Distro Supawave connects your music with the right audience. Access playlist pitching, cross-platform marketing, and royalty tools designed for independent labels.',
+            'labels_text'     => 'Distroflow connects your music with the right audience. Access playlist pitching, cross-platform marketing, and royalty tools designed for independent labels.',
             'labels_image'    => 'images/home/canoe.jpg',
 
             'pricing_title'   => 'Simple Pricing. No hidden fees.',

@@ -6,7 +6,7 @@
     <div style="text-align:center; padding: 20px 0;">
     
         <h1 class="card-title" style="font-size:28px; margin-bottom:10px;">Welcome to
-            {{ config('app.name', 'Distro Supawave') }}</h1>
+            {{ config('app.name', 'Distroflow') }}</h1>
         <p class="card-subtitle" style="font-size:15px; max-width:480px; margin:0 auto 32px;">
             The music distribution platform installer will guide you through setting up your application in just a few
             steps.

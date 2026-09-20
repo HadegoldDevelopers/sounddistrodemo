@@ -1,6 +1,6 @@
-# Distro Supawave — White-Label Music Distribution Platform
+# Distroflow — White-Label Music Distribution Platform
 
-Distro Supawave is a white-label music distribution platform built with **Laravel 12**. Artists and labels submit releases, admins review and approve them, download metadata packages, and push to any distributor (CDBaby, Symphonic, DistroKid, etc.). Royalties are imported via CSV and paid out through an earnings approval workflow.
+Distroflow is a white-label music distribution platform built with **Laravel 12**. Artists and labels submit releases, admins review and approve them, download metadata packages, and push to any distributor (CDBaby, Symphonic, DistroKid, etc.). Royalties are imported via CSV and paid out through an earnings approval workflow.
 
 ## Features
 

@@ -74,7 +74,7 @@ yarn-error.log*
 
 # ── CodeCanyon package artifacts (keep out of git) ──────
 SoundDistro-*.zip
-DistroSupawave-*.zip
+Distroflow-*.zip
 *.zip
 /preview/
 !/storage/framework/schedule/.gitignore

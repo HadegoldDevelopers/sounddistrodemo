@@ -4,7 +4,7 @@
 
 @section('content')
     <h2 class="card-title">Server Requirements</h2>
-    <p class="card-subtitle">Checking that your server meets all requirements to run Distro Supawave.</p>
+    <p class="card-subtitle">Checking that your server meets all requirements to run Distroflow.</p>
 
     {{-- PHP Extensions --}}
     <div class="section-title">PHP Extensions</div>

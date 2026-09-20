@@ -1,5 +1,5 @@
 {
-    "name": "distro-supawave",
+    "name": "distroflow",
     "private": true,
     "type": "module",
     "scripts": {

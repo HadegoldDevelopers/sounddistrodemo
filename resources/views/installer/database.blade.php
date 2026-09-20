@@ -24,7 +24,7 @@
 
         <div class="form-group">
             <label>Database Name <span class="req">*</span></label>
-            <input type="text" name="db_name" value="{{ old('db_name') }}" placeholder="distrosupawave_db" required
+            <input type="text" name="db_name" value="{{ old('db_name') }}" placeholder="distroflow_db" required
                 class="{{ $errors->has('db_name') ? 'error-field' : '' }}">
             <div class="field-hint">The database must already be created on your server.</div>
             @error('db_name')<div class="field-error">{{ $message }}</div>@enderror

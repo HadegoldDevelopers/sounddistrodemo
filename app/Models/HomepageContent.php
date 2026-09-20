@@ -72,7 +72,7 @@ class HomepageContent extends Model
             return match ($key) {
                 // Hero
                 'hero_title'      => __('Create your Art. Make your Money. Repeat.'),
-                'hero_text'       => __('Distro Supawave is built for creators like you. Distribute your songs to 150+ platforms and get paid every month.'),
+                'hero_text'       => __('Distroflow is built for creators like you. Distribute your songs to 150+ platforms and get paid every month.'),
                 'hero_image'      => 'images/home/hero.jpg',
 
                 // Features
@@ -82,7 +82,7 @@ class HomepageContent extends Model
 
                 // Labels section
                 'labels_title'    => __('Built for Labels. Trusted by Artists.'),
-                'labels_text'     => __('Distro Supawave connects your music with the right audience. Access playlist pitching, cross‑platform marketing, and royalty tools designed for independent labels.'),
+                'labels_text'     => __('Distroflow connects your music with the right audience. Access playlist pitching, cross‑platform marketing, and royalty tools designed for independent labels.'),
                 'labels_image'    => 'images/home/canoe.jpg',
 
                 // Pricing
@@ -94,7 +94,7 @@ class HomepageContent extends Model
                 // CTA
                 'cta_title_1'     => __('Ready to Launch'),
                 'cta_title_2'     => __('Your Music?'),
-                'cta_text'        => __('Get started today with a free Distro Supawave account.'),
+                'cta_text'        => __('Get started today with a free Distroflow account.'),
                 
                 default           => $value
             };

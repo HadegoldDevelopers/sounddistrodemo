@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distro Supawave Documentation</title>
+    <title>Distroflow Documentation</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         * {
@@ -483,7 +483,7 @@
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-logo">
-                <h1><i class="fa-solid fa-music"></i> Distro Supawave</h1>
+                <h1><i class="fa-solid fa-music"></i> Distroflow</h1>
                 <p>Documentation v1.1.0</p>
             </div>
             <div class="sidebar-section">Getting Started</div>
@@ -517,7 +517,7 @@
 
             <!-- Hero -->
             <div class="page-hero">
-                <h1><i class="fa-solid fa-music"></i> Distro Supawave Documentation</h1>
+                <h1><i class="fa-solid fa-music"></i> Distroflow Documentation</h1>
                 <p>White-Label Music Distribution Platform &mdash; Built with Laravel 12</p>
                 <div class="meta">
                     <span><i class="fa-solid fa-tag"></i> Version 1.1.0</span>
@@ -556,11 +556,11 @@
             <!-- Introduction -->
             <div class="section" id="introduction">
                 <h2><i class="fa-solid fa-house"></i> Introduction</h2>
-                <p>Thank you for purchasing <strong>Distro Supawave</strong>. This documentation will guide you through
+                <p>Thank you for purchasing <strong>Distroflow</strong>. This documentation will guide you through
                     installing, configuring, and using the platform. Please read through this document fully before
                     starting the installation.</p>
 
-                <p>Distro Supawave is a white-label music distribution platform that allows you to run your own
+                <p>Distroflow is a white-label music distribution platform that allows you to run your own
                     distribution
                     service. Artists and labels submit their releases through your platform. You review and approve
                     them, download the metadata package, and manually push to your chosen distributor (CDBaby,
@@ -569,8 +569,8 @@
 
                 <div class="alert alert-info">
                     <i class="fa-solid fa-circle-info"></i>
-                    <div><strong>Live Demo:</strong> Visit <a href="https://distrosupawave.hadegoldmedia.com"
-                            target="_blank">distrosupawave.hadegoldmedia.com</a> to see the platform in action before
+                    <div><strong>Live Demo:</strong> Visit <a href="https://distroflow.hadegoldmedia.com"
+                            target="_blank">distroflow.hadegoldmedia.com</a> to see the platform in action before
                         installation.</div>
                 </div>
 
@@ -595,7 +595,7 @@
             <!-- Requirements -->
             <div class="section" id="requirements">
                 <h2><i class="fa-solid fa-list-check"></i> Server Requirements</h2>
-                <p>Before installing Distro Supawave, make sure your server meets the following requirements:</p>
+                <p>Before installing Distroflow, make sure your server meets the following requirements:</p>
 
                 <div class="requirement-grid">
                     <div class="req-card">
@@ -638,7 +638,7 @@
 
                 <div class="alert alert-success">
                     <i class="fa-solid fa-circle-check"></i>
-                    <div>Distro Supawave is compatible with <strong>shared hosting</strong> (cPanel), VPS, and dedicated
+                    <div>Distroflow is compatible with <strong>shared hosting</strong> (cPanel), VPS, and dedicated
                         servers. No special server configuration is required beyond the requirements above.</div>
                 </div>
             </div>
@@ -646,13 +646,13 @@
             <!-- Installation -->
             <div class="section" id="installation">
                 <h2><i class="fa-solid fa-download"></i> Installation</h2>
-                <p>Distro Supawave includes a <strong>web installer</strong> that handles the entire setup
+                <p>Distroflow includes a <strong>web installer</strong> that handles the entire setup
                     process for
                     you. Follow these steps carefully.</p>
 
                 <h3>Step 1 &mdash; Upload Files</h3>
                 <ol>
-                    <li>Download the package ZIP from CodeCanyon</li>
+                    <li>Download and extract the package ZIP</li>
                     <li>Extract the ZIP on your server</li>
                     <li>Move/Copy all extracted files to your server's <strong>public_html</strong> folder (or your
                         domain's root folder)</li>
@@ -857,7 +857,7 @@ RewriteRule ^(.*)$ https://%1/$1 [L,R=301]
                 </ol>
 
                 <h3>SMTP Email Configuration</h3>
-                <p>Distro Supawave sends email notifications for release approvals, earnings, and withdrawals. Configure
+                <p>Distroflow sends email notifications for release approvals, earnings, and withdrawals. Configure
                     SMTP
                     during installation or update the following values in your <code>.env</code> file:</p>
 
@@ -901,7 +901,7 @@ php_value memory_limit 256M</code></pre>
             <!-- User Roles -->
             <div class="section" id="roles">
                 <h2><i class="fa-solid fa-users"></i> User Roles</h2>
-                <p>Distro Supawave has three distinct roles:</p>
+                <p>Distroflow has three distinct roles:</p>
 
                 <table>
                     <tr>
@@ -970,7 +970,7 @@ php_value memory_limit 256M</code></pre>
                 </div>
 
                 <h3>Audio Upload</h3>
-                <p>Distro Supawave uses <strong>chunked uploading</strong> for audio files. Large files (100MB+ WAV
+                <p>Distroflow uses <strong>chunked uploading</strong> for audio files. Large files (100MB+ WAV
                     files)
                     are split into 2MB chunks and uploaded progressively. This means large files work even on shared
                     hosting with standard PHP upload limits. A progress bar shows the upload status for each track, and
@@ -1060,14 +1060,14 @@ php_value memory_limit 256M</code></pre>
                 <h2><i class="fa-solid fa-fingerprint"></i> Copyright Scanner (ACRCloud)</h2>
 
                 <p>To prevent users from uploading copyrighted tracks (which could lead to takedowns and platform bans),
-                    Distro Supawave fingerprints every uploaded master audio file through the <strong>ACRCloud</strong>
+                    Distroflow fingerprints every uploaded master audio file through the <strong>ACRCloud</strong>
                     audio
                     recognition API before it is permanently stored.</p>
 
                 <h3>How It Works</h3>
                 <ol>
                     <li>An artist uploads a track &mdash; the audio is chunked and stitched into a master file</li>
-                    <li>Distro Supawave extracts a short ~15 second snippet (no FFmpeg required) and sends it to
+                    <li>Distroflow extracts a short ~15 second snippet (no FFmpeg required) and sends it to
                         ACRCloud
                     </li>
                     <li>ACRCloud fingerprints the snippet and matches it against a library of commercial recordings</li>
@@ -1117,7 +1117,7 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
             <div class="section" id="royalties">
                 <h2><i class="fa-solid fa-coins"></i> Royalties &amp; CSV Import</h2>
 
-                <p>When your distributor sends you a royalty report (usually monthly), you upload it to Distro Supawave.
+                <p>When your distributor sends you a royalty report (usually monthly), you upload it to Distroflow.
                     The
                     platform parses the CSV, matches tracks to the correct artists, and creates earnings records for
                     each artist.</p>
@@ -1214,7 +1214,7 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
 
                 <div class="alert alert-warning">
                     <i class="fa-solid fa-triangle-exclamation"></i>
-                    <div>Distro Supawave does <strong>not</strong> process withdrawals automatically. You must manually
+                    <div>Distroflow does <strong>not</strong> process withdrawals automatically. You must manually
                         send
                         the payment to the artist through PayPal, your bank, or your crypto exchange, then mark it as
                         approved in the platform.</div>
@@ -1254,7 +1254,7 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
             <!-- Payments -->
             <div class="section" id="payments">
                 <h2><i class="fa-solid fa-credit-card"></i> Payment Gateways</h2>
-                <p>Distro Supawave supports several payment gateways for subscription payments. Configure them in
+                <p>Distroflow supports several payment gateways for subscription payments. Configure them in
                     <strong>Settings → Payment</strong>. Each gateway has an enable/disable toggle and a sandbox/live
                     mode.
                 </p>
@@ -1320,7 +1320,7 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
             <!-- Emails -->
             <div class="section" id="emails">
                 <h2><i class="fa-solid fa-envelope"></i> Email Notifications</h2>
-                <p>Distro Supawave sends the following automatic email notifications:</p>
+                <p>Distroflow sends the following automatic email notifications:</p>
 
                 <table>
                     <tr>
@@ -1416,7 +1416,7 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
             <div class="section" id="license">
                 <h2><i class="fa-solid fa-key"></i> Licensing</h2>
 
-                <p>Distro Supawave is distributed as a <strong>fully standalone</strong> application. It does <strong>not</strong>
+                <p>Distroflow is distributed as a <strong>fully standalone</strong> application. It does <strong>not</strong>
                 include any purchase-code or license verification &mdash; there is no license server, no phone-home,
                 no domain-locking, and no activation requirement. After installation the application runs entirely
                 on the buyer&rsquo;s own hosting with no external dependencies.</p>
@@ -1470,27 +1470,27 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
             <div class="section" id="faq">
                 <h2><i class="fa-solid fa-circle-question"></i> Frequently Asked Questions</h2>
 
-                <h3>Does Distro Supawave automatically push music to Spotify or Apple Music?</h3>
-                <p>No. Distro Supawave is a management platform. You download the release package and manually upload it
+                <h3>Does Distroflow automatically push music to Spotify or Apple Music?</h3>
+                <p>No. Distroflow is a management platform. You download the release package and manually upload it
                     to
                     your chosen distributor (CDBaby, Symphonic, DistroKid, etc.). This gives you full control over which
                     distributor you use and keeps the platform lean and fast.</p>
 
                 <h3>Can I use my own distributor?</h3>
-                <p>Yes. Distro Supawave works with any distributor. The metadata export (JSON, CSV, PDF) is designed to
+                <p>Yes. Distroflow works with any distributor. The metadata export (JSON, CSV, PDF) is designed to
                     be
                     compatible with all major distributors.</p>
 
                 <h3>What CSV formats does the royalty importer support?</h3>
-                <p>Distro Supawave has a built-in Soundrop parser and a universal auto-detect parser that works with
+                <p>Distroflow has a built-in Soundrop parser and a universal auto-detect parser that works with
                     most
                     distributor CSV formats by detecting column headers automatically.</p>
 
                 <h3>Can I run this on shared hosting?</h3>
-                <p>Yes. Distro Supawave is fully compatible with shared hosting (cPanel). The audio upload uses chunked
+                <p>Yes. Distroflow is fully compatible with shared hosting (cPanel). The audio upload uses chunked
                     uploading to work within standard PHP upload limits.</p>
 
-                <h3>Does Distro Supawave check for copyrighted uploads?</h3>
+                <h3>Does Distroflow check for copyrighted uploads?</h3>
                 <p>Yes. Every upload is fingerprinted through ACRCloud (see <a href="#copyright">Copyright Scanner</a>).
                     Matches are flagged in the admin release queue so you can reject them before they are distributed.
                     ACRCloud offers a free tier of 100 identifications per month.</p>
@@ -1500,8 +1500,8 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
                     text, images, features, pricing text, featured artists, and call-to-action (see <a
                         href="#homepage">Homepage Content</a>).</p>
 
-                <h3>How do I update Distro Supawave when a new version is released?</h3>
-                <p>Download the new version from CodeCanyon, back up your current files and database, then overwrite the
+                <h3>How do I update Distroflow when a new version is released?</h3>
+                <p>Download the new version from your marketplace/vendor, back up your current files and database, then overwrite the
                     files (excluding <code>.env</code>) and run <code>php artisan migrate</code> via SSH or the cPanel
                     terminal.</p>
 
@@ -1527,7 +1527,7 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
                 <ol>
                     <li>Read through this documentation fully</li>
                     <li>Check the FAQ section above</li>
-                    <li>Check the <strong>CodeCanyon comments</strong> section &mdash; your question may already be
+                    <li>Check the <strong>item comments</strong> section &mdash; your question may already be
                         answered</li>
                 </ol>
 
@@ -1539,11 +1539,11 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
                     </tr>
                     <tr>
                         <td><i class="fa-solid fa-envelope" style="color:#6366f1;"></i> &nbsp; Email</td>
-                        <td><a href="mailto:codecanyon@hadegoldmedia.com">codecanyon@hadegoldmedia.com</a></td>
+                        <td><a href="mailto:support@yourdomain.com">support@yourdomain.com</a></td>
                     </tr>
                     <tr>
-                        <td><i class="fa-brands fa-envato" style="color:#6366f1;"></i> &nbsp; CodeCanyon</td>
-                        <td>Use the item comments or support tab on the CodeCanyon item page</td>
+                        <td><i class="fa-solid fa-comments" style="color:#6366f1;"></i> &nbsp; Item page</td>
+                        <td>Use the item comments or support tab on the marketplace item page</td>
                     </tr>
                 </table>
 
@@ -1561,7 +1561,7 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
                     <h4><i class="fa-solid fa-globe"></i> &nbsp; Live Demo</h4>
                     <div class="credential-row">
                         <span class="credential-label">URL</span>
-                        <span class="credential-value">distrosupawave.hadegoldmedia.com</span>
+                        <span class="credential-value">distroflow.hadegoldmedia.com</span>
                     </div>
                     <h4 style="margin-top:16px;"><i class="fa-solid fa-user-shield"></i> &nbsp; Admin Login</h4>
                     <div class="credential-row">
@@ -1594,8 +1594,8 @@ ACR_HOST=https://identify-eu-west-1.acrcloud.com</code></pre>
 
                 <br>
                 <p style="text-align:center; color:#94a3b8; font-size:13px;">
-                    &copy; 2026 <strong>Hadegold Media</strong> &nbsp;|&nbsp; DistroSupawave v1.1.0 &nbsp;|&nbsp;
-                    <a href="https://distrosupawave.hadegoldmedia.com" target="_blank">Live Demo</a>
+                    &copy; 2026 <strong>Hadegold Media</strong> &nbsp;|&nbsp; Distroflow v1.1.0 &nbsp;|&nbsp;
+                    <a href="https://distroflow.hadegoldmedia.com" target="_blank">Live Demo</a>
                 </p>
             </div>
 

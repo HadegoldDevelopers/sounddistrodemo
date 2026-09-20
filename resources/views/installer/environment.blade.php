@@ -14,7 +14,7 @@
 
         <div class="form-group">
             <label>Site Name <span class="req">*</span></label>
-            <input type="text" name="site_name" value="{{ old('site_name', 'Distro Supawave') }}"
+            <input type="text" name="site_name" value="{{ old('site_name', 'Distroflow') }}"
                 placeholder="My Distro Platform" required>
             <div class="field-hint">This appears in the header, emails, and browser tab.</div>
         </div>
@@ -86,7 +86,7 @@
 
         <div class="form-group">
             <label>From Name</label>
-            <input type="text" name="mail_name" value="{{ old('mail_name') }}" placeholder="Distro Supawave Platform">
+            <input type="text" name="mail_name" value="{{ old('mail_name') }}" placeholder="Distroflow Platform">
             <div class="field-hint">Name that appears in the "From" field of emails sent to users.</div>
         </div>
 

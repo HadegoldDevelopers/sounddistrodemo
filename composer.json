@@ -2,7 +2,7 @@
     "$schema": "https://getcomposer.org/schema.json",
     "name": "laravel/laravel",
     "type": "project",
-    "description": "Distro Supawave - White-label music distribution platform built with Laravel 12.",
+    "description": "Distroflow - White-label music distribution platform built with Laravel 12.",
     "keywords": ["laravel", "framework"],
     "license": "proprietary",
     "require": {

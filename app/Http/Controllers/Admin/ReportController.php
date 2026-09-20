@@ -156,7 +156,7 @@ class ReportController extends Controller
 
     /**
      * Build the CSV filename from site name, artist name, and period filters.
-     * e.g. "distrosupawave-burna-boy-earnings-January-2025.csv"
+     * e.g. "distroflow-burna-boy-earnings-January-2025.csv"
      */
     private function buildFilename(string $siteName, ?string $artistName, ?int $year, ?int $month): string
     {
