@@ -28,8 +28,10 @@ Route::prefix('install')->name('installer.')->middleware(['web', 'installer.chec
   Route::get('/finish',              [InstallerController::class, 'finish'])->name('finish');
 });
 
-// Complete is outside the middleware group so it runs even after installation
-Route::get('/install/complete', [InstallerController::class, 'complete'])
+// Complete is outside the middleware group so it runs even after installation.
+// POST only: it triggers the installer self-destruct (deletes installer files),
+// so it must not be callable via an unprotected GET request.
+Route::post('/install/complete', [InstallerController::class, 'complete'])
   ->middleware('web')
   ->name('installer.complete');
 

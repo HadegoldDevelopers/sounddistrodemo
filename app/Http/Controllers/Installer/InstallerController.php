@@ -44,10 +44,10 @@ class InstallerController extends Controller
         }
 
         $phpVersion = PHP_VERSION;
-        $phpOk      = version_compare($phpVersion, '8.1.0', '>=');
+        $phpOk      = version_compare($phpVersion, '8.2.0', '>=');
 
         $requirements = [
-            ['label' => 'PHP Version >= 8.1',   'status' => $phpOk,                        'value' => $phpVersion],
+            ['label' => 'PHP Version >= 8.2',   'status' => $phpOk,                        'value' => $phpVersion],
             ['label' => 'BCMath Extension',      'status' => extension_loaded('bcmath'),    'value' => extension_loaded('bcmath')    ? 'Enabled' : 'Missing'],
             ['label' => 'Ctype Extension',       'status' => extension_loaded('ctype'),     'value' => extension_loaded('ctype')     ? 'Enabled' : 'Missing'],
             ['label' => 'cURL Extension',        'status' => extension_loaded('curl'),      'value' => extension_loaded('curl')      ? 'Enabled' : 'Missing'],
@@ -252,8 +252,16 @@ class InstallerController extends Controller
                 opcache_reset();
             }
 
-            // 9. Clear installer session
-            session()->forget(array_keys(session()->all()));
+            // 9. Clear installer session (preserve the CSRF token)
+            foreach (array_keys(session()->all()) as $key) {
+                if (str_starts_with((string) $key, 'installer')) {
+                    session()->forget($key);
+                }
+            }
+
+            // Mark install as complete so the finish page can post to
+            // /install/complete (which triggers the protected self-destruct).
+            session(['installer.ready' => true]);
 
             return redirect()->route('installer.finish');
         } catch (\Exception $e) {
@@ -275,16 +283,25 @@ class InstallerController extends Controller
     // ─────────────────────────────────────────────
     // Complete — Self destruct and redirect
     // ─────────────────────────────────────────────
-    public function complete(Request $request)
-    {
-        $this->selfDestruct();
-
-        if ($request->get('redirect') === 'home') {
-            return redirect('/');
-        }
-
-        return redirect(config('app.url') . '/admin/login');
+public function complete(Request $request)
+{
+    // Only allowed immediately after a successful installation. The
+    // self-destruct deletes the installer files, so it must never be
+    // triggerable anonymously or by a stale/guessed request.
+    if (!$this->isInstalled() || !$request->session()->get('installer.ready')) {
+        abort(403);
     }
+
+    $this->selfDestruct();
+
+    $request->session()->forget('installer.ready');
+
+    if ($request->get('redirect') === 'home') {
+        return redirect('/');
+    }
+
+    return redirect(config('app.url') . '/admin/login');
+}
 
     // ─────────────────────────────────────────────
     // AJAX — Test DB Connection

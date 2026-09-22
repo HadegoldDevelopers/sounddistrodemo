@@ -75,6 +75,17 @@ public function manualInstructions(Request $request)
 
     $reference = 'MAN-' . strtoupper(uniqid());
 
+    // Create a pending transaction so the admin can review and approve it.
+    Transaction::create([
+        'user_id' => $user->id,
+        'plan_id' => $plan->id,
+        'gateway' => 'manual',
+        'amount' => $amount,
+        'currency' => $currency,
+        'reference' => $reference,
+        'status' => 'pending',
+    ]);
+
     $manual = $manualGateway->settings;
 
     return view('user.payments.manual-instructions', [
@@ -178,36 +189,57 @@ public function coinpaymentsIpn(Request $request)
 {
     Log::info('CoinPayments IPN', $request->all());
 
-    // Required fields
+    // 1. Verify the CoinPayments HMAC signature using the IPN secret.
+    $service = app(\App\Services\PaymentGateways\CoinpaymentsService::class);
+    $ipnSecret = $service->ipnSecret();
+
+    if (empty($ipnSecret)) {
+        Log::warning('CoinPayments IPN rejected: IPN secret not configured.');
+        return response('IPN secret not configured', 503);
+    }
+
+    $signature = $request->header('Hmac');
+    $expected = hash_hmac('sha512', $request->getContent(), $ipnSecret);
+
+    if (empty($signature) || !hash_equals($expected, $signature)) {
+        Log::warning('CoinPayments IPN rejected: invalid HMAC signature.');
+        return response('Invalid signature', 400);
+    }
+
+    // 2. Required fields.
     $txnId = $request->input('txn_id');
     $status = (int) $request->input('status');
-    $custom = json_decode($request->input('custom', '{}'), true);
 
     if (!$txnId) {
         return response('missing txn', 400);
     }
 
+    // 3. Resolve the previously stored transaction. Never trust user/plan
+    //    values sent in the callback — they come from our own record.
     $transaction = Transaction::where('reference', $txnId)
         ->where('gateway', 'coinpayments')
         ->first();
 
     if (!$transaction) {
-        Log::warning('Transaction not found for IPN', ['txn_id' => $txnId]);
+        Log::warning('CoinPayments transaction not found for IPN', ['txn_id' => $txnId]);
         return response('not found', 404);
     }
 
-    // Prevent double processing
+    // Idempotency guard — never process an already-paid transaction again.
     if ($transaction->status === 'paid') {
         return response('already processed', 200);
     }
 
-    // CoinPayments status >= 100 means complete
+    // 4. CoinPayments status >= 100 (or 2) means the payment completed.
     if ($status >= 100 || $status === 2) {
 
-        $user = User::find($custom['user_id'] ?? null);
-        $plan = SubscriptionPlan::find($custom['plan_id'] ?? null);
+        $user = $transaction->user;
+        $plan = $transaction->plan;
 
         if (!$user || !$plan) {
+            Log::error('CoinPayments IPN: invalid user or plan on stored transaction', [
+                'transaction_id' => $transaction->id,
+            ]);
             return response('invalid data', 400);
         }
 

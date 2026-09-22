@@ -12,6 +12,7 @@ class CoinpaymentsService
     protected string $publicKey;
     protected string $privateKey;
     protected string $merchantId;
+    protected ?string $ipnSecret;
     protected string $apiUrl = 'https://www.coinpayments.net/api.php';
 
     public function __construct()
@@ -33,7 +34,27 @@ class CoinpaymentsService
         $settings['merchant_id']
         ?? throw new \Exception('CoinPayments merchant ID missing')
     );
+
+    // IPN secret is used to verify callback signatures. If it is not
+    // configured, callbacks will be rejected (fail-closed).
+    $this->ipnSecret = !empty($settings['ipn_secret'])
+        ? (function () use ($settings) {
+            try {
+                return decrypt($settings['ipn_secret']);
+            } catch (\Throwable $e) {
+                return $settings['ipn_secret'];
+            }
+        })()
+        : null;
 }
+
+    /**
+     * The IPN secret used to verify CoinPayments callback signatures.
+     */
+    public function ipnSecret(): ?string
+    {
+        return $this->ipnSecret;
+    }
 
     /**
      * Core API request
@@ -81,9 +102,12 @@ class CoinpaymentsService
     }
 
     /**
-     * Create payment
+     * Create payment.
+     *
+     * Returns the CoinPayments checkout URL (a string) so the caller can
+     * redirect the buyer directly to checkout.
      */
-    public function initiatePayment($user, float $amount, string $currency, $plan): array
+    public function initiatePayment($user, float $amount, string $currency, $plan): string
     {
         $params = [
             'cmd' => 'create_transaction',
@@ -112,6 +136,18 @@ class CoinpaymentsService
             'status' => 'pending',
         ]);
 
-        return $result;
+        // Extract the checkout URL. Prefer the one returned by the API,
+        // otherwise build it from the transaction id + merchant id.
+        if (!empty($result['checkout_url'])) {
+            return $result['checkout_url'];
+        }
+
+        $txnId = $result['txn_id'] ?? '';
+
+        return 'https://www.coinpayments.net/index.php?cmd=_pay&txn_id='
+            . urlencode($txnId) . '&merchant=' . urlencode($this->merchantId)
+            . '&item_name=' . urlencode($plan->name ?? 'Subscription')
+            . '&currency1=' . urlencode(strtoupper($currency))
+            . '&amountf=' . urlencode((string) $amount);
     }
 }

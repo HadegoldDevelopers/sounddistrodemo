@@ -403,5 +403,87 @@ public function deleteArtist($id)
 
         return back()->with('success', 'Earnings updated successfully');
     }
+
+    /**
+     * List manual payment transactions awaiting admin approval.
+     */
+    public function manualTransactions()
+    {
+        $transactions = Transaction::with(['user', 'subscription_plan'])
+            ->where('gateway', 'manual')
+            ->orderByDesc('created_at')
+            ->paginate(20);
+
+        return view('admin.payments.manual', compact('transactions'));
+    }
+
+    /**
+     * Approve a manual payment (idempotent): only a pending transaction can
+     * be approved, and approval activates the buyer's subscription.
+     */
+    public function approveManual(\App\Models\Transaction $transaction)
+    {
+        if ($transaction->gateway !== 'manual') {
+            return back()->with('error', 'Invalid transaction.');
+        }
+
+        $activated = \DB::transaction(function () use ($transaction) {
+            $updated = Transaction::query()
+                ->where('id', $transaction->id)
+                ->where('gateway', 'manual')
+                ->where('status', 'pending')
+                ->update(['status' => 'paid']);
+
+            if ($updated === 0) {
+                return false;
+            }
+
+            $user = User::query()->where('id', $transaction->user_id)->lockForUpdate()->first();
+            $plan = $transaction->subscription_plan;
+
+            if (!$user || !$plan) {
+                return false;
+            }
+
+            if ($plan->role === 'label') {
+                $user->role = 'label';
+            }
+
+            $user->update([
+                'is_sub' => 1,
+                'sub_expires_at' => $plan->expiryDate(),
+            ]);
+
+            return true;
+        });
+
+        if (!$activated) {
+            return back()->with('error', 'Only pending manual payments can be approved.');
+        }
+
+        return back()->with('success', 'Manual payment approved and subscription activated.');
+    }
+
+    /**
+     * Reject a manual payment (idempotent): only a pending transaction can be rejected.
+     */
+    public function rejectManual(\App\Models\Transaction $transaction)
+    {
+        if ($transaction->gateway !== 'manual') {
+            return back()->with('error', 'Invalid transaction.');
+        }
+
+        $updated = Transaction::query()
+            ->where('id', $transaction->id)
+            ->where('gateway', 'manual')
+            ->where('status', 'pending')
+            ->update(['status' => 'failed']);
+
+        if ($updated === 0) {
+            return back()->with('error', 'Only pending manual payments can be rejected.');
+        }
+
+        return back()->with('success', 'Manual payment rejected.');
+    }
 }
 

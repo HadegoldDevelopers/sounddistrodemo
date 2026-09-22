@@ -2,6 +2,37 @@
 
 All notable changes to **Distroflow** are documented in this file.
 
+## v1.2.0 — 2026-09-20
+
+### Security
+- Installer self-destruct (`/install/complete`) is now **POST-only** and
+  requires a completed installation + one-time session flag. No longer
+  triggerable via an unprotected GET request.
+- **CoinPayments IPN** now verifies the HMAC-SHA512 signature with the IPN
+  secret and resolves the buyer/plan from the stored transaction instead of
+  trusting values sent in the callback.
+- **CoinPayments checkout** now redirects to the real checkout URL extracted
+  from the API response (previously the raw response array was passed to
+  `redirect()`).
+- **Master audio files** are now stored in **private storage** (`storage/app/private/songs`)
+  with unique UUID filenames and served only through authorized endpoints.
+  Previously they lived in `public/songs`.
+- Track/cover filenames are no longer derived from the project title — UUIDs
+  and owner-prefixed chunk names prevent cross-user collision/overwrite.
+- Release finalization now **verifies each `audio_path` and `cover_path` was
+  uploaded by the current user in the current session** instead of trusting
+  client-supplied file paths.
+- The default Laravel middleware stack is preserved (no `$middleware->use()`
+  replacement).
+- Installer now requires **PHP >= 8.2**, matching `composer.json`.
+
+### Payments
+- Registered **MoneyUnify** in the payment gateway seeder.
+- Fixed the MoneyUnify wait page to poll `payment.moneyunify.check`.
+- Completed the **Manual Payment** flow end-to-end: pending transaction is
+  created at checkout, and admins can review, approve (activating the
+  subscription) or reject it.
+
 ## v1.1.0 — 2026-09-18
 
 ### Removed

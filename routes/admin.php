@@ -69,6 +69,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::get('/{release}/download-metadata', [AdminMusicController::class, 'downloadMetadata'])->name('metadata.download');
     Route::get('/{release}/download-audio', [AdminMusicController::class, 'downloadAudio'])->name('audio.download');
     Route::get('/{release}/download-cover', [AdminMusicController::class, 'downloadCover'])->name('cover.download');
+    Route::get('/{release}/stream-audio', [AdminMusicController::class, 'streamAudio'])->name('audio.stream');
 
     // Metadata edit
     Route::get('/metadata/{project}', [AdminMusicController::class, 'metadataEdit'])->name('metadata');
@@ -99,6 +100,13 @@ Route::prefix('subscriptions')->name('subscriptions.')->group(function () {
         ->name('history');
     Route::get('/user/{user}', [UserSubscriptionController::class, 'userSubscription'])
         ->name('user');
+});
+
+// Manual Payments (admin review / approval)
+Route::prefix('payments')->name('payments.')->group(function () {
+    Route::get('/manual', [AdminController::class, 'manualTransactions'])->name('manual');
+    Route::post('/manual/{transaction}/approve', [AdminController::class, 'approveManual'])->name('manual.approve');
+    Route::post('/manual/{transaction}/reject', [AdminController::class, 'rejectManual'])->name('manual.reject');
 });
 
 Route::prefix('analytics')->name('analytics.')->group(function () {

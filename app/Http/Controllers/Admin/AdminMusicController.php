@@ -48,6 +48,24 @@ class AdminMusicController extends Controller
     ]);
 }
 
+/**
+ * Stream a private master file to the (admin-authenticated) player.
+ * Audio is never served from the public web root.
+ */
+public function streamAudio(Music $release)
+{
+    $disk = Storage::disk('songs');
+
+    $path = str_replace('songs/', '', (string) $release->audio_path);
+
+    abort_unless($disk->exists($path), 404);
+
+    return $disk->response($path, str($release->title)->slug('-') . '.mp3', [
+        'Content-Type' => 'audio/mpeg',
+        'Accept-Ranges' => 'bytes',
+    ]);
+}
+
 
 
     public function downloadCover(Project $release): StreamedResponse

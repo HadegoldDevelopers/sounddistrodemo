@@ -14,6 +14,7 @@ class PaymentGatewaysSeeder extends Seeder
             ['name' => 'coinpayments', 'display_name' => 'CoinPayments'],
             ['name' => 'nowpayment', 'display_name' => 'NowPayment'],
             ['name' => 'paypal', 'display_name' => 'PayPal'],
+            ['name' => 'moneyunify', 'display_name' => 'MoneyUnify'],
             ['name' => 'manual', 'display_name' => 'Manual Payment'],
         ];
 

@@ -45,8 +45,8 @@ return [
         
         'songs' => [
     'driver' => 'local',
-    'root' => public_path('songs'),
-    'visibility' => 'public',
+    'root' => storage_path('app/private/songs'),
+    'visibility' => 'private',
 ],
 'covers' => [
     'driver' => 'local',

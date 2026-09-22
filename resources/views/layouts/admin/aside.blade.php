@@ -109,13 +109,14 @@
                 @include('layouts.admin.group', [
                     'icon' => 'fa-dollar-sign',
                     'label' => 'Royalties & Payments',
-                    'open' => request()->routeIs('admin.royalties.*') || request()->routeIs('admin.withdrawals.*'),
+                    'open' => request()->routeIs('admin.royalties.*') || request()->routeIs('admin.withdrawals.*') || request()->routeIs('admin.payments.*'),
                     'items' => [
                         ['route' => 'admin.royalties.reports',          'label' => 'Royalty Overview'],
                         ['route' => 'admin.royalties.reports.streams', 'label' => 'Stream Reports'],
                         ['route' => 'admin.royalties.reports.earnings','label' => 'Earnings Approval'],
                         ['route' => 'admin.withdrawals.pending',         'label' => 'Withdrawal Requests'],
                         ['route' => 'admin.withdrawals.history','label' => 'Withdrawal History'],
+                        ['route' => 'admin.payments.manual',             'label' => 'Manual Payments'],
                     ]
                 ])
             </div>

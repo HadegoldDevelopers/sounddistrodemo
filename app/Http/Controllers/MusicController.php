@@ -59,6 +59,10 @@ class MusicController extends Controller
         // Move file
         $file->move($directory, $filename);
 
+        // Register the cover so finalization can verify it belongs to this
+        // authenticated user instead of trusting the client-supplied path.
+        session()->push('uploads.covers', $filename);
+
         return response()->json([
             'path' => "temp/covers/$filename",
             'url'  => assetPath("temp/covers/$filename"),
@@ -97,26 +101,33 @@ class MusicController extends Controller
         $safeTitle = preg_replace('/[^A-Za-z0-9_\-]/', '', $safeTitle);
         $trackNumber = str_pad($trackIndex, 2, '0', STR_PAD_LEFT);
 
+        // Prefix chunk names with the owner's id so concurrent uploads from
+        // different users can never collide or overwrite each other.
+        $user = Auth::user();
+        $ownerKey = $user?->id ?? 'anon';
+        $base = $ownerKey . '_' . $safeTitle . '_Track_' . $trackNumber;
+
         $tempDir = public_path('temp/chunks');
         if (!is_dir($tempDir)) mkdir($tempDir, 0777, true);
 
         $chunkFile = $request->file('chunk');
-        $chunkPath = $tempDir . '/' . $safeTitle . '_Track_' . $trackNumber . '.part' . $chunkNumber;
+        $chunkPath = $tempDir . '/' . $base . '.part' . $chunkNumber;
 
         $chunkFile->move($tempDir, basename($chunkPath));
 
-        // If last chunk, assemble
+        // If last chunk, assemble into a uniquely-named private master file.
         if ($chunkNumber == $totalChunks) {
-            $finalDir = public_path('songs');
-            if (!is_dir($finalDir)) mkdir($finalDir, 0777, true);
+            // Master files live in private storage (never web-accessible).
+            $finalDir = \Illuminate\Support\Facades\Storage::disk('songs')->path('');
+            if (!is_dir($finalDir)) mkdir($finalDir, 0775, true);
 
-            $finalName = $safeTitle . '_Track_' . $trackNumber . '.' . $ext;
+            $finalName = \Illuminate\Support\Str::uuid() . '.' . $ext;
             $finalPath = $finalDir . '/' . $finalName;
 
             $out = fopen($finalPath, 'wb');
 
             for ($i = 1; $i <= $totalChunks; $i++) {
-                $partPath = $tempDir . '/' . $safeTitle . '_Track_' . $trackNumber . '.part' . $i;
+                $partPath = $tempDir . '/' . $base . '.part' . $i;
                 if (!file_exists($partPath)) continue;
 
                 $in = fopen($partPath, 'rb');
@@ -128,13 +139,13 @@ class MusicController extends Controller
             fclose($out);
 
             // Defense in depth: verify the assembled file is genuine audio
-            // before storing it in the web root. If not, remove it.
+            // before keeping it. If not, remove it.
             $finfo = new \finfo(FILEINFO_MIME_TYPE);
             $mime  = $finfo->file($finalPath);
 
             if (!$mime || (!str_starts_with($mime, 'audio/') && $mime !== 'video/mp4')) {
                 @unlink($finalPath);
-                foreach ($this->remainingChunks($tempDir, $safeTitle, $trackNumber, $totalChunks) as $p) {
+                foreach ($this->remainingChunks($tempDir, $base, $totalChunks) as $p) {
                     @unlink($p);
                 }
                 return response()->json(['error' => 'Uploaded file is not a valid audio file.'], 422);
@@ -146,10 +157,13 @@ class MusicController extends Controller
             // release can be submitted. Non-fatal on scanner failure.
             $this->inspectMasterFile($finalPath);
 
+            // Register the file so finalization can verify it belongs to
+            // this authenticated user instead of trusting the client path.
+            session()->push('uploads.audio', $finalName);
+
             return response()->json([
                 'done' => true,
                 'path' => 'songs/' . $finalName,
-                'url'  => asset('songs/' . $finalName),
             ]);
         }
 
@@ -159,11 +173,11 @@ class MusicController extends Controller
     /**
      * Return the list of uploaded chunk paths for a track.
      */
-    private function remainingChunks(string $tempDir, string $safeTitle, string $trackNumber, int $totalChunks): array
+    private function remainingChunks(string $tempDir, string $base, int $totalChunks): array
     {
         $paths = [];
         for ($i = 1; $i <= $totalChunks; $i++) {
-            $paths[] = $tempDir . '/' . $safeTitle . '_Track_' . $trackNumber . '.part' . $i;
+            $paths[] = $tempDir . '/' . $base . '.part' . $i;
         }
         return $paths;
     }
@@ -210,8 +224,16 @@ class MusicController extends Controller
             return $redirect->with('error', 'Please complete your profile before uploading a release.');
         }
 
+        // Verify the cover was uploaded by THIS user in THIS session. Never
+        // trust an arbitrary client-supplied cover_path.
+        $coverPath = $request->cover_path;
+        if (!str_starts_with((string) $coverPath, 'temp/covers/')
+            || !in_array(basename($coverPath), session('uploads.covers', []), true)) {
+            return back()->withErrors(['cover_path' => 'Invalid cover image. Please re-upload the cover art.']);
+        }
+
         // Move cover from temp → final
-        $coverPath = $this->moveCover($request->cover_path);
+        $coverPath = $this->moveCover($coverPath);
 
         // 1. Create Project
         $project = Project::create([
@@ -242,6 +264,18 @@ class MusicController extends Controller
                 return back()->withErrors(['tracks' => 'Each track must finish uploading audio before submitting.']);
             }
 
+            // Verify this master file was uploaded by the current user in
+            // this session and still exists in private storage. Never trust
+            // an arbitrary client-supplied audio_path.
+            $audioPath = $track['audio_path'];
+            $audioName = basename((string) $audioPath);
+
+            if (!str_starts_with((string) $audioPath, 'songs/')
+                || !in_array($audioName, session('uploads.audio', []), true)
+                || !\Illuminate\Support\Facades\Storage::disk('songs')->exists($audioName)) {
+                return back()->withErrors(['tracks' => 'One of the uploaded audio files is invalid. Please re-upload it.']);
+            }
+
             Music::create([
                 'project_id'       => $project->id,
                 'user_id'          => $user->id,
@@ -249,16 +283,16 @@ class MusicController extends Controller
                 'artist'           => $artist->name,
                 'genre'            => $request->genre,
                 'featured_artists' => $track['featured_artists'] ?? null,
-                'audio_path'       => $track['audio_path'],
+                'audio_path'       => $audioPath,
                 'cover_path'       => $coverPath,
                 'isrc'             => $track['isrc'] ?? null,
                 'credits'          => $track['credits'] ?? null,
                 'track_number'     => $trackNumber++,
                 'release_date'     => $request->release_date,
-                'status'           => $this->trackStatusFor($track['audio_path']),
+                'status'           => $this->trackStatusFor($audioPath),
             ]);
 
-            $this->flagUserIfBlocked($user, $track['audio_path']);
+            $this->flagUserIfBlocked($user, $audioPath);
         }
         if ($user && $user->email) {
             // Refresh to ensure project and its tracks are fully saved

@@ -80,8 +80,8 @@
             <p><strong>Featured:</strong> {{ $track->featured_artists ?? 'None' }}</p>
             <p><strong>ISRC:</strong> {{ $track->isrc ?? 'Not added' }}</p>
 
-            <audio controls class="w-full mt-2">
-                <source src="{{ assetPath($track->audio_path) }}" type="audio/mpeg">
+            <audio controls class="w-full mt-2" preload="none">
+                <source src="{{ route('admin.releases.audio.stream', $track->id) }}" type="audio/mpeg">
             </audio>
 
             @if($track->audio_path)

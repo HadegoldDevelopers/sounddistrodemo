@@ -28,7 +28,7 @@
 </div>
 
 <script>
-    const checkUrl = "{{ route('subscription.moneyunify.check', $transactionId) }}";
+    const checkUrl = "{{ route('payment.moneyunify.check', $transactionId) }}";
 
     setInterval(() => {
         fetch(checkUrl)

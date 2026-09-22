@@ -18,14 +18,13 @@
         <div style="display:flex; flex-direction:column; gap:10px;">
             <div style="font-size:13px;">
                 <span style="color:var(--muted); display:inline-block; width:120px;">Homepage</span>
-                <a href="{{ route('installer.complete', ['redirect' => 'home']) }}"
-                    style="color:var(--primary); word-break:break-all;">
+                <a href="{{ url('/') }}" style="color:var(--primary); word-break:break-all;">
                     {{ config('app.url') }}
                 </a>
             </div>
             <div style="font-size:13px;">
                 <span style="color:var(--muted); display:inline-block; width:120px;">Admin Panel</span>
-                <a href="{{ route('installer.complete') }}" style="color:var(--primary); word-break:break-all;">
+                <a href="{{ url('/admin/login') }}" style="color:var(--primary); word-break:break-all;">
                     {{ config('app.url') }}/admin/login
                 </a>
             </div>
@@ -83,13 +82,19 @@
 
             {{-- Action buttons --}}
             <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-                <a href="{{ route('installer.complete') }}" class="btn btn-primary" style="font-size:15px; padding:12px 32px;">
-                    Go to Admin Panel
-                </a>
-                <a href="{{ route('installer.complete', ['redirect' => 'home']) }}" class="btn btn-outline"
-                    style="font-size:15px; padding:12px 32px;">
-                    Go to Homepage
-                </a>
+                <form method="POST" action="{{ route('installer.complete') }}">
+                    @csrf
+                    <button type="submit" class="btn btn-primary" style="font-size:15px; padding:12px 32px;">
+                        Go to Admin Panel
+                    </button>
+                </form>
+                <form method="POST" action="{{ route('installer.complete') }}">
+                    @csrf
+                    <input type="hidden" name="redirect" value="home">
+                    <button type="submit" class="btn btn-outline" style="font-size:15px; padding:12px 32px;">
+                        Go to Homepage
+                    </button>
+                </form>
             </div>
 
         </div>
