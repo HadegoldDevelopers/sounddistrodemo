@@ -139,6 +139,14 @@ ACR_HOST={{ $acrHost }}</pre>
                                 <label class="block mb-1 text-sm font-medium text-gray-700">Merchant ID</label>
                                 <input type="text" name="gateways[coinpayments][merchant_id]" value="{{ old('gateways.coinpayments.merchant_id') }}" class="w-full rounded border border-gray-300 p-2 bg-white text-gray-800">
                             </div>
+                            <div class="mb-4">
+                                <label for="coinpayments_ipn_secret" class="block mb-1 text-sm font-medium text-gray-700">IPN Secret</label>
+                                <input type="password" name="gateways[coinpayments][ipn_secret]" id="coinpayments_ipn_secret"
+                                       value="{{ old('gateways.coinpayments.ipn_secret') }}"
+                                       placeholder="Leave blank to keep the current secret"
+                                       class="w-full rounded border border-gray-300 p-2 text-gray-800 bg-white">
+                                <small class="text-gray-400">Your CoinPayments IPN secret — used to verify the callback signature.</small>
+                            </div>
                         @elseif($gateway->name === 'moneyunify')
     <div class="mb-4">
         <label class="block mb-1 text-sm font-medium text-gray-700">Auth ID</label>

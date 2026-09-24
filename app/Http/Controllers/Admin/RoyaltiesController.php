@@ -188,22 +188,45 @@ public function massApprove(Request $request)
         return back()->with('error', 'No earnings selected.');
     }
 
-    $earnings = UserBalance::whereIn('id', $ids)
-        ->where('status', 'pending')
-        ->get();
+    // Atomically flip every selected pending earning to approved and credit
+    // the wallet inside a single transaction, using conditional updates so
+    // concurrent requests can never credit the same earning twice.
+    $credited = \DB::transaction(function () use ($ids) {
+        $total = 0;
 
-    foreach ($earnings as $earning) {
+        foreach ($ids as $id) {
+            $updated = \App\Models\UserBalance::query()
+                ->where('id', $id)
+                ->where('status', 'pending')
+                ->update(['status' => 'approved', 'updated_at' => now()]);
 
-        // 1. Update earning status
-        $earning->status = 'approved';
-        $earning->updated_at = now();
-        $earning->save();
+            if ($updated === 0) {
+                continue;
+            }
 
-        // 2. Update user balance
-        $earning->user->increment('wallet_balance', $earning->amount);
-    }
+            $earning = \App\Models\UserBalance::find($id);
 
-    return back()->with('success', 'Selected earnings approved successfully.');
+            if (!$earning) {
+                continue;
+            }
+
+            $user = \App\Models\User::query()
+                ->where('id', $earning->user_id)
+                ->lockForUpdate()
+                ->first();
+
+            if ($user) {
+                $user->wallet_balance += $earning->amount;
+                $user->save();
+            }
+
+            $total++;
+        }
+
+        return $total;
+    });
+
+    return back()->with('success', $credited . ' earning(s) approved successfully.');
 }
 
 public function rejectEarnings(UserBalance $balance)

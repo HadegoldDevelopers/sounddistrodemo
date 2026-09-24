@@ -41,6 +41,14 @@ class Transaction extends Model
         return $this->belongsTo(SubscriptionPlan::class, 'plan_id', 'id');
     }
 
+    /**
+     * Alias for subscription_plan(), used by payment callbacks.
+     */
+    public function plan()
+    {
+        return $this->subscription_plan();
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Helpers (optional but useful)

@@ -57,6 +57,14 @@ class CoinpaymentsService
     }
 
     /**
+     * The configured CoinPayments merchant/account id.
+     */
+    public function merchantId(): string
+    {
+        return $this->merchantId;
+    }
+
+    /**
      * Core API request
      */
     protected function apiRequest(array $params): array
@@ -132,6 +140,8 @@ class CoinpaymentsService
             'gateway' => 'coinpayments',
             'amount' => $amount,
             'currency' => strtoupper($currency),
+            'original_amount' => $plan->price,
+            'original_currency' => 'USD',
             'reference' => $result['txn_id'] ?? null,
             'status' => 'pending',
         ]);

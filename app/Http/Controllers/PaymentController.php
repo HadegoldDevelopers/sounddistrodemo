@@ -68,31 +68,30 @@ public function manualInstructions(Request $request)
     }
 
     $user = auth()->user();
-    $plan = SubscriptionPlan::findOrFail($request->plan_id);
 
-    $amount = $request->amount;
-    $currency = $request->currency ?? 'USD';
+    // Load the pending transaction created in process() (POST). The page is
+    // read-only — refreshing it never creates a new transaction, and the
+    // amount/currency come from the stored record, never from the URL.
+    $reference = $request->reference ?? $request->query('reference');
 
-    $reference = 'MAN-' . strtoupper(uniqid());
+    $transaction = Transaction::where('reference', $reference)
+        ->where('gateway', 'manual')
+        ->where('user_id', $user->id)
+        ->first();
 
-    // Create a pending transaction so the admin can review and approve it.
-    Transaction::create([
-        'user_id' => $user->id,
-        'plan_id' => $plan->id,
-        'gateway' => 'manual',
-        'amount' => $amount,
-        'currency' => $currency,
-        'reference' => $reference,
-        'status' => 'pending',
-    ]);
+    if (!$transaction) {
+        return redirect()->route('payment.index')
+            ->with('error', 'Manual payment reference not found.');
+    }
 
+    $plan = $transaction->subscription_plan;
     $manual = $manualGateway->settings;
 
     return view('user.payments.manual-instructions', [
         'plan'      => $plan,
-        'amount'    => $amount,
-        'currency'  => $currency,
-        'reference' => $reference,
+        'amount'    => $transaction->amount,
+        'currency'  => $transaction->currency,
+        'reference' => $transaction->reference,
         'manual'    => (object) $manual,
         'user'      => $user,
     ]);
@@ -112,16 +111,36 @@ public function manualInstructions(Request $request)
 
     // Convert currency FIRST (needed for manual + all gateways)
     $currency = \App\Services\CurrencyConverter::convert();
-    $conversionRate = $currency->conversion_rate;
+
+    // Guard against missing/zero conversion rates (would zero out or break
+    // the price). Falls back to 1:1 (the USD base rate).
+    $conversionRate = (float) ($currency->conversion_rate ?? 0);
+    if ($conversionRate <= 0) {
+        $conversionRate = 1.0;
+    }
+
     $convertedAmount = $plan->price * $conversionRate;
 
-    // Handle manual payment BEFORE gateway logic
+    // Handle manual payment BEFORE gateway logic. The amount/currency are
+    // always computed server-side from the plan — never trusted from the
+    // request — and a pending transaction is created once via this POST.
     if ($paymentMethod === 'manual') {
-        return redirect()->route('payment.manual', [
+        $reference = 'MAN-' . strtoupper(uniqid());
+
+        Transaction::create([
+            'user_id' => $user->id,
             'plan_id' => $plan->id,
+            'gateway' => 'manual',
             'amount' => $convertedAmount,
-            'currency' => $currency->code
-        ])->with('success', 'Manual payment initiated. Follow instructions to complete.');
+            'currency' => $currency->code,
+            'original_amount' => $plan->price,
+            'original_currency' => 'USD',
+            'reference' => $reference,
+            'status' => 'pending',
+        ]);
+
+        return redirect()->route('payment.manual', ['reference' => $reference])
+            ->with('success', 'Manual payment initiated. Follow instructions to complete.');
     }
 
     // Build gateway service class
@@ -204,6 +223,17 @@ public function coinpaymentsIpn(Request $request)
     if (empty($signature) || !hash_equals($expected, $signature)) {
         Log::warning('CoinPayments IPN rejected: invalid HMAC signature.');
         return response('Invalid signature', 400);
+    }
+
+    // 2. Verify the callback merchant id matches our configured merchant id.
+    $callbackMerchant = (string) ($request->input('merchant') ?? '');
+    $configuredMerchant = (string) $service->merchantId();
+
+    if ($configuredMerchant === '' || $callbackMerchant === '' || !hash_equals($configuredMerchant, $callbackMerchant)) {
+        Log::warning('CoinPayments IPN rejected: merchant id mismatch.', [
+            'callback_merchant' => $callbackMerchant,
+        ]);
+        return response('Invalid merchant', 400);
     }
 
     // 2. Required fields.
@@ -484,10 +514,17 @@ public function wait($transactionId)
     $result = $service->verifyTransaction($transactionId);
 
     // Find the pending transaction
-    $transaction = Transaction::where('reference', $transactionId)->first();
+    $transaction = Transaction::where('reference', $transactionId)
+        ->where('gateway', 'moneyunify')
+        ->first();
 
     if (!$transaction) {
         return response()->json(['status' => 'failed']);
+    }
+
+    // Idempotency guard — never activate an already-processed payment again.
+    if ($transaction->status === 'paid') {
+        return response()->json(['status' => 'success']);
     }
 
     // If MoneyUnify says success
@@ -495,6 +532,10 @@ public function wait($transactionId)
 
         $user = $transaction->user;
         $plan = $transaction->plan;
+
+        if (!$user || !$plan) {
+            return response()->json(['status' => 'failed']);
+        }
 
         // Activate subscription
         if ($plan->role === 'label') {

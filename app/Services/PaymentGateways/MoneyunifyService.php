@@ -105,9 +105,10 @@ if (!preg_match('/^09\d{8}$/', $phone)) {
             'user_id' => $user->id,
             'plan_id' => $plan->id,
             'gateway' => 'moneyunify',
-            'amount' => $amount,
-            'converted_amount' => $amountZMW,
-            'currency' => $currency,
+            'amount' => $amountZMW,
+            'currency' => 'ZMW',
+            'original_amount' => $amount,
+            'original_currency' => $currency,
             'reference' => $transactionId,
             'status' => 'pending',
         ]);

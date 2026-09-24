@@ -106,9 +106,18 @@ if (! function_exists('convertCurrency')) {
         $from = CurrencyConverter::getByCode($fromCode);
         $to   = CurrencyConverter::getByCode($toCode);
 
-        $amountInUSD = $amount / $from->conversion_rate;
+        $fromRate = (float) ($from->conversion_rate ?? 0);
+        $toRate   = (float) ($to->conversion_rate ?? 0);
 
-        return $amountInUSD * $to->conversion_rate;
+        // Guard against zero/missing rates so conversions never divide by
+        // zero or silently produce bogus amounts.
+        if ($fromRate <= 0 || $toRate <= 0) {
+            return $amount;
+        }
+
+        $amountInUSD = $amount / $fromRate;
+
+        return $amountInUSD * $toRate;
     }
 
 }
